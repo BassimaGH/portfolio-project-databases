@@ -1,8 +1,13 @@
 const express = require("express")
+const expressHandlebars = require("express-handlebars")
 const app = express()
 
-app.get("/", function(req, res){
-    res.send("start page!")
+app.engine("hbs", expressHandlebars.engine({
+    defaultLayout: "human.hbs",
+}))
+
+app.get("/humans", function(req, res){
+    res.render("human.hbs")
 })
 
 
