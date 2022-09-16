@@ -1,0 +1,31 @@
+#logo_svg {
+    width: 4.5vw;
+    height: 4.5vw;
+}
+
+#moon_svg {
+    width: 2.5vw;
+    height: 2.5vw;
+}
+
+#account_icon_svg {
+    width: 2.5vw;
+    height: 2.5vw;
+}
+
+.circle_icons {
+    width: 3.5vw;
+    height: 3.5vw;
+    color: black;
+}
+
+/* circle style */
+.circle_obj {
+    width: 10vw;
+    height: 7vw;
+    border-radius: 50%;
+    background-color: #FF6701;
+    color: #FFF7EF;
+    text-align: center;
+    padding-top: 3vw;
+}
