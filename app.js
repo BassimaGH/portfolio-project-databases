@@ -10,6 +10,10 @@ app.use (
     express.static("public")
 )
 
+app.use (
+    express.static("style.css")
+)
+
 app.get("/", function(req, res){
     res.render("start.hbs")
 })
