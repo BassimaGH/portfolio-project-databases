@@ -1,1 +1,37 @@
-<h1>Projects posts admin</h1>
+<div class="mt-[35px]">
+    <h1 class="font-bold text-3xl">Projects</h1>
+    <h3 class="text-2xl whitespace-nowrap">Here you can add projects</h3>
+
+    <div>
+        <ul class="flex flex-row gap-4 mt-[35px]">
+            <li>Add</li>
+            <li>Edit</li>
+            <li>Remove</li>
+        </ul>
+    </div>
+
+    <form action="" class="mt-[35px]">
+        <div class="flex flex-row gap-4 whitespace-nowrap">
+            <label for="project_name">Project name: </label>
+            <input type="text" id="project_name">
+        </div>
+
+        <div class="flex flex-row gap-4 whitespace-nowrap">
+            <label for="project_sub_headline">Project sub-headline: </label>
+            <input type="text" id="project_sub_headline">
+        </div>
+
+        <div class="flex flex-row gap-4 whitespace-nowrap">
+            <label for="project_describtion">Project describtion: </label>
+            <input type="text" id="project_describtion">
+        </div>
+
+        <div class="flex flex-row gap-4 whitespace-nowrap">
+            <label for="project_pictures">Project pictures</label>
+            <input type="file" name="project_pictures" id="project_pictures">
+        </div>
+
+        <input type="submit" class="bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px]" name="add_project" id="add_project">
+    </form>
+
+</div>
