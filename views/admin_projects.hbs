@@ -3,14 +3,14 @@
     <h3 class="text-2xl whitespace-nowrap">Here you can add projects</h3>
 
     <div>
-        <ul class="flex flex-row gap-4 mt-[35px]">
-            <li>Add</li>
-            <li>Edit</li>
-            <li>Remove</li>
+        <ul class="flex flex-row gap-10 mt-[35px]">
+            <a href="/admin_projects"><li class="text-primary_color">Add</li></a>
+            <a href="/projects_edit"><li class="hover:text-hover_color">Edit</li></a>
+            <a href="/projects_remove"><li class="hover:text-hover_color">Remove</li></a>
         </ul>
     </div>
 
-    <form action="" class="mt-[35px]">
+    <form action="" class="mt-[35px] bg-gray-100 p-4 space-y-4">
         <div class="flex flex-row gap-4 whitespace-nowrap">
             <label for="project_name">Project name: </label>
             <input type="text" id="project_name">
@@ -23,7 +23,7 @@
 
         <div class="flex flex-row gap-4 whitespace-nowrap">
             <label for="project_describtion">Project describtion: </label>
-            <input type="text" id="project_describtion">
+            <textarea id="project_describtion" class="form-textarea mt-1 block w-full" rows="3" placeholder="Enter project description"></textarea>
         </div>
 
         <div class="flex flex-row gap-4 whitespace-nowrap">
@@ -31,7 +31,7 @@
             <input type="file" name="project_pictures" id="project_pictures">
         </div>
 
-        <input type="submit" class="bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px]" name="add_project" id="add_project">
+        <input type="submit" value="Add project" class="bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color" name="add_project" id="add_project">
     </form>
 
 </div>

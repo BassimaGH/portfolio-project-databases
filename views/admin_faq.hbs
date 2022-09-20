@@ -3,14 +3,14 @@
     <h3 class="text-2xl whitespace-nowrap">Here you can add FAQ posts</h3>
 
     <div>
-        <ul class="flex flex-row gap-4 mt-[35px]">
-            <li>Add</li>
-            <li>Edit</li>
-            <li>Remove</li>
+        <ul class="flex flex-row gap-10 mt-[35px]">
+            <a href="/admin_faq"><li class="text-primary_color">Add</li></a>
+            <a href="/faq_edit"><li class="hover:text-hover_color">Edit</li></a>
+            <a href="/faq_remove"><li class="hover:text-hover_color">Remove</li></a>
         </ul>
     </div>
 
-    <form action="" class="mt-[35px]">
+    <form action="" class="mt-[35px] bg-gray-100 space-y-4 p-4">
         <div class="flex flex-row gap-4 whitespace-nowrap">
             <label for="post_question">Post question: </label>
             <input type="text" id="post_question">
@@ -18,7 +18,7 @@
 
         <div class="flex flex-row gap-4 whitespace-nowrap">
             <label for="post_answer">Post answer: </label>
-            <input type="text" id="post_answer">
+            <textarea id="post_answer" class="form-textarea mt-1 block w-full" rows="3" placeholder="Enter post answer"></textarea>
         </div>
 
         <div class="flex flex-row gap-4 whitespace-nowrap">
@@ -26,6 +26,6 @@
             <input type="date" id="post_date">
         </div>
 
-        <input type="submit" class="mt-[35px] bg-primary_color text-white font-light py-2 px-4 rounded" name="add_post" id="add_post">
+        <input type="submit" class="bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color" name="add_post" id="add_post">
     </form>
 </div>
