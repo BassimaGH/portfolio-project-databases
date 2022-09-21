@@ -1,0 +1,16 @@
+<div class="flex flex-col justify-start items-center">
+    <a href="/projects"><button type="button" class="bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color">Back</button></a>
+
+    {{#if project}}
+        <ul class="">
+                <div class="flex flex-col items-center text-light_nav_body_text_color bg-secondary_color py-4 px-4 rounded">
+                    <h3>{{project.project_name}}</h3>
+                    <p>{{project.project_sub_headline}}</p>
+                    <p>{{project.project_description}}</p>
+                </div>
+        </ul>
+        {{else}}
+        <p>There are no projects at the moment.</p>
+    {{/if}}
+        
+</div>

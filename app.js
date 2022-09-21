@@ -58,14 +58,23 @@ app.get("/projects", function(req, res){
         }
 
         res.render("projects.hbs", model)
-    }) 
-
-
-    
+    })    
 })
 
 // NEED TO ADD PROJECT DETAILS PAGES USING A DATABASE
+app.get("/projects/:id", function(req, res){
+    const id = req.params.id
+    const query = `SELECT * FROM projects WHERE id = ?`
+    const values = [id]
 
+    db.get(query, values, function(error, project) {
+        const model = {
+            project,
+        }
+        res.render("project_details.hbs", model)
+    })
+    
+})
 // login page (only the admin can enter the correct values)
 app.get("/login", function(req, res){
     res.render("login.hbs")
@@ -100,7 +109,16 @@ app.get("/admin_faq", function(req, res){
 
 //projects (edit, remove)
 app.get("/projects_edit", function(req, res){
-    res.render("projects_edit.hbs", {layout: "admin.hbs"})
+
+    const query = `SELECT * FROM projects`
+
+    db.all(query, function(error, projects) {
+        const model = {
+            projects 
+        }
+
+        res.render("projects.hbs",{layout: "admin.hbs"}, model)
+    }) 
 })
 
 app.get("/projects_remove", function(req, res){
