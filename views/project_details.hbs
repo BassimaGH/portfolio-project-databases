@@ -1,14 +1,20 @@
-<div class="flex flex-col justify-start items-center">
-    <a href="/projects"><button type="button" class="bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color">Back</button></a>
+<div class="flex flex-col items-center h-screen">
+    <div class="flex container ml-[35px] justify-start m">
+        <a href="/projects"><button type="button" class="bg-primary_color text-white font-light mt-[35px] hover:bg-hover_color rounded-full p-[20px]">Back</button></a>
+    </div>
 
     {{#if project}}
-        <ul class="">
-                <div class="flex flex-col items-center text-light_nav_body_text_color bg-secondary_color py-4 px-4 rounded">
-                    <h3>{{project.project_name}}</h3>
-                    <p>{{project.project_sub_headline}}</p>
-                    <p>{{project.project_description}}</p>
-                </div>
-        </ul>
+            <div class="flex flex-col items-center text-light_nav_body_text_color mt-[35px] bg-secondary_color py-4 px-4 rounded">
+                <h1 class="text-3xl">{{project.project_name}}</h1>
+                <p>{{project.project_sub_headline}}</p>
+                <ul class="flex flex-row gap-10 mt-[35px] items-center">
+                    <a href="/projects/{{project.id}}"><li class="text-primary_color">Description</li></a>
+                    <a href="/project_pictures"><li class="hover:text-primary_color">Project pictures</li></a>
+                    <a href="/project_blog"><li class="hover:text-primary_color">Blog</li></a>
+                    <a href="/project_faq"><li class="hover:text-primary_color">FAQs</li></a>
+                </ul>
+                <p class="mt-[35px]">{{project.project_description}}</p>
+            </div>
         {{else}}
         <p>There are no projects at the moment.</p>
     {{/if}}

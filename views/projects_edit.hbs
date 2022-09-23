@@ -21,50 +21,30 @@
         </div>
     </div>
     
-    {{#if projects.length}}
-        <ul class="flex flex-row gap-x-3">
-            {{#each projects}}
-                <div class="flex flex-col items-center text-light_nav_body_text_color bg-secondary_color py-4 px-4 rounded">
-                    <h3>{{project_name}}</h3>
-                    <p>{{project_sub_headline}}</p>
-                    <a href="/projects/{{id}}"><button type="button" class="bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color">More</button></a>
-                </div>
-            {{/each}}
-        </ul>
-        {{else}}
-        <p>There are no projects at the moment.</p>
-    {{/if}}
-
     <table class="table-fixed mt-[15px]">
         <thead class="bg-gray-50 p-4">
             <tr>
                 <th scope="col" class="py-3 px-6">Name</th>
                 <th scope="col" class="py-3 px-6">Sub-headline</th>
                 <th scope="col" class="py-3 px-6">Description</th>
-                <th scope="col" class="py-3 px-6">Date</th>
+                
             </tr>
         </thead>
         <tbody class="bg-gray-100 space-y-4 p-4">
-            <tr>
-                <td contenteditable="true" class="hover:text-primary_color py-3 px-6"></td>
-                <td contenteditable="true" class="hover:text-primary_color py-3 px-6"></td>
-                <td contenteditable="true" class="hover:text-primary_color py-3 px-6"></td>
-                <td contenteditable="true" class="hover:text-primary_color py-3 px-6"></td>
-            </tr>
-            <tr>
-                <td contenteditable="true" class="hover:text-primary_color py-3 px-6"></td>
-                <td contenteditable="true" class="hover:text-primary_color py-3 px-6"></td>
-                <td contenteditable="true" class="hover:text-primary_color py-3 px-6"></td>
-                <td contenteditable="true" class="hover:text-primary_color py-3 px-6"></td>
-            </tr>
-            <tr>
-                <td contenteditable="true" class="hover:text-primary_color py-3 px-6"></td>
-                <td contenteditable="true" class="hover:text-primary_color py-3 px-6"></td>
-                <td contenteditable="true" class="hover:text-primary_color py-3 px-6"></td>
-                <td contenteditable="true" class="hover:text-primary_color py-3 px-6"></td>
-            </tr>
+            {{#if projects.length}}
+                {{#each projects}}
+                    <tr>
+                        <td contenteditable="true" class="hover:text-primary_color py-3 px-6">{{project_name}}</td>
+                        <td contenteditable="true" class="hover:text-primary_color py-3 px-6">{{project_sub_headline}}</td>
+                        <td contenteditable="true" class="hover:text-primary_color py-3 px-6">{{project_description}}</td>
+                    </tr>
+                {{/each}}
+            {{else}}
+            <p>There are no projects at the moment.</p>
+            {{/if}}
         </tbody>
     </table>
+    
 
     <form action="" class="mt-[35px] space-y-4">
         <input type="submit" value="Confirm edit" class="bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color" name="add_post" id="add_post">
