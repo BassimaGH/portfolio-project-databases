@@ -2,9 +2,9 @@
     <h1 class="text-3xl font-bold">Personal projects</h1>
 
     {{#if projects.length}}
-        <ul class="flex flex-row gap-x-3">
+        <ul class="flex flex-row flex-wrap gap-x-3">
             {{#each projects}}
-                <div class="flex flex-col items-center text-light_nav_body_text_color bg-secondary_color py-[5rem] px-[5rem] m-[35px] rounded">
+                <div class="flex flex-col flex-wrap items-center text-light_nav_body_text_color bg-secondary_color py-[5rem] px-[5rem] m-[35px] rounded">
                     <h3>{{project_name}}</h3>
                     <p>{{project_sub_headline}}</p>
                     <a href="/projects/{{id}}"><button type="button" class="bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color">More</button></a>

@@ -1,10 +1,13 @@
 const express = require("express")
 const expressHandlebars = require("express-handlebars")
 const sqlite3 = require("sqlite3")
-
-const db = new sqlite3.Database("projects_database.db")
+const expressSession = require("express-session")
 
 const project_name_max_chara = 100
+const admin_username = "Bassima"
+const admin_password = "2003"
+
+const db = new sqlite3.Database("projects_database.db")
 
 db.run(`
     CREATE TABLE IF NOT EXISTS projects (
@@ -14,15 +17,13 @@ db.run(`
         project_description TEXT
     )`
 )
+
 // is it gonna make it harder for me if i add foreign keys to different tables?
 // how to add DATE in a database table.
 // how to edit database values inside vscode
 // how to add projects to a database table from the website (i have issues with it maybe because of me having a lot of pages?).
 // is it possible to add a layout and a data object in a render property.
 // can i copy tailwind componenets from the internet (search bar, pagination, etc.).
-
-
-
 
 db.run(`
     CREATE TABLE IF NOT EXISTS blogs (
@@ -39,7 +40,8 @@ db.run(`
         id INTEGER PRIMARY KEY,
         post_question TEXT,
         post_answer TEXT,
-        post_date TEXT
+        post_date TEXT,
+        FOREIGN KEY (id) REFERENCES projects(id)
     )`
 )
 
@@ -47,8 +49,7 @@ const app = express()
 
 //sets the default layout to the main.hbs file
 app.engine("hbs", expressHandlebars.engine({
-    defaultLayout: "main.hbs",
-    partialsDir: __dirname + "/views/partials"
+    defaultLayout: "main.hbs"
 }))
 
 
@@ -62,11 +63,23 @@ app.use(
     })
 )
 
+app.use(
+    expressSession({
+        saveUninitialized: false,
+        resave: false,
+        secret: "bassima2003"
+    })
+)
+
 // RENDERS THE PAGES (USER SIDE)
 
 // home page
 app.get("/", function(req, res){
-    res.render("start.hbs")
+    const model = {
+        session: req.session
+    }
+
+    res.render("start.hbs", model)
 })
 
 // about page
@@ -112,7 +125,22 @@ app.get("/login", function(req, res){
     res.render("login.hbs")
 })
 
+app.post("/login", function (req, res) {
+    const username = req.body.username
+    const password = req.body.password
 
+    if (username == admin_username && password == admin_password) {
+        req.session.isLoggedIn = true
+
+        res.redirect("/dashboard")
+    } else {
+        const model = {
+            failed_to_login: true
+        }
+
+        res.render("login.hbs", model)
+    }
+})
 // RENDERS THE PAGES (ADMIN SIDE)
 
 // In the navigation bar
@@ -136,7 +164,7 @@ app.post("/projects/add", function(req, res){
 
     if (project_name == "") {
         errorMessage.push("name cant be empty")
-    } else if (project_name.length > maxChara) {
+    } else if (project_name.length > project_name_max_chara) {
         errorMessage.push("name should be less than " + project_name_max_chara + " charachters")
     }
 
@@ -175,10 +203,44 @@ app.get("/projects_edit", function(req, res){
 
         res.render("projects_edit.hbs", model)
     }) 
+
+})
+
+app.get("/project/edit", function(req, res){
+    const id = req.params.id
+    const project_name = req.body.project_name
+    const project_sub_headline = req.body.project_sub_headline
+    const project_description = req.body.project_description
+
+    const errorMessage = []
+
+    const query = `
+    UPDATE projects SET project_name = ?, project_sub_headline = ?, project_description = ? WHERE id = ?
+    `
+
+    const values = [project_name, project_sub_headline, project_description, id]
+
+    db.run(query, values, function(error) {
+        if(error) {
+            res.redirect("/dashboard")
+        } else {
+            res.redirect("/admin_projects")
+        }
+
+    })
 })
 
 app.get("/projects_remove", function(req, res){
-    res.render("projects_remove.hbs", {layout: "admin.hbs"})
+    const query = `SELECT * FROM projects`
+
+    db.all(query, function(error, projects) {
+        const model = {
+            projects ,
+            layout: "admin.hbs"
+        }
+
+        res.render("projects_remove.hbs", model)
+    }) 
 })
 
 //blog (edit, remove)

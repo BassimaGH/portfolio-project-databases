@@ -20,33 +20,39 @@
             <input type="text" id="table-search" class="block p-2 pl-10 w-80 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search for items">
         </div>
     </div>
-    
-    <table class="table-fixed mt-[15px]">
-        <thead class="bg-gray-50 p-4">
-            <tr>
-                <th scope="col" class="py-3 px-6">Name</th>
-                <th scope="col" class="py-3 px-6">Sub-headline</th>
-                <th scope="col" class="py-3 px-6">Description</th>
-                
-            </tr>
-        </thead>
-        <tbody class="bg-gray-100 space-y-4 p-4">
-            {{#if projects.length}}
-                {{#each projects}}
-                    <tr>
-                        <td contenteditable="true" class="hover:text-primary_color py-3 px-6">{{project_name}}</td>
-                        <td contenteditable="true" class="hover:text-primary_color py-3 px-6">{{project_sub_headline}}</td>
-                        <td contenteditable="true" class="hover:text-primary_color py-3 px-6">{{project_description}}</td>
-                    </tr>
-                {{/each}}
-            {{else}}
-            <p>There are no projects at the moment.</p>
-            {{/if}}
-        </tbody>
-    </table>
-    
 
-    <form action="" class="mt-[35px] space-y-4">
-        <input type="submit" value="Confirm edit" class="bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color" name="add_post" id="add_post">
+    {{#if errorMessages.length}}
+    <ul>
+        {{#each errorMessages}}
+            <li>{{this}}</li>
+        {{/each}}
+    </ul>
+    {{/if}}
+
+    <form action="/projects/edit" method="get">
+        <table class="table-fixed mt-[15px]">
+            <thead class="bg-gray-50 p-4">
+                <tr>
+                    <th scope="col" class="py-3 px-6">Name</th>
+                    <th scope="col" class="py-3 px-6">Sub-headline</th>
+                    <th scope="col" class="py-3 px-6">Description</th>
+                    
+                </tr>
+            </thead>
+            <tbody class="bg-gray-100 space-y-4 p-4">
+                {{#if projects.length}}
+                    {{#each projects}}
+                        <tr>
+                            <td contenteditable="true" class="hover:text-primary_color py-3 px-6"><input type="text" name="project_name" value="{{project_name}}" class="bg-gray-100 py-2 px-4"></td>
+                            <td contenteditable="true" class="hover:text-primary_color py-3 px-6"><input type="text" name="project_sub_headline" value="{{project_sub_headline}}" class="bg-gray-100 py-2 px-4"></td>
+                            <td contenteditable="true" class="hover:text-primary_color py-3 px-6"><input type="text" name="project_description" value="{{project_description}}" class="bg-gray-100 py-2 px-4"></td>
+                        </tr>
+                    {{/each}}
+                {{else}}
+                    <p>There are no projects at the moment.</p>
+                {{/if}}
+            </tbody>
+        </table>
+        <input type="submit" value="Confirm edit" class="mt-[35px] mb-[35px] bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color" name="edit_projects" id="edit_projects">
     </form>
 </div>
