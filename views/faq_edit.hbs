@@ -10,9 +10,32 @@
         </ul>
     </div>
 
-    <form action="" class="mt-[35px] space-y-4">
-        <h1>gonna add a table here</h1>
-
-        <input type="submit" value="Confirm edit" class="mt-[35px] bg-primary_color text-white font-light py-2 px-4 rounded" name="add_post" id="add_post">
-    </form>
+    
+    <table class="table-fixed mt-[15px]">
+            <thead class="bg-gray-50 p-4">
+                <tr>
+                <th scope="col" class="py-3 px-6">Post Question</th>
+                <th scope="col" class="py-3 px-6">Post Answer</th>
+                <th scope="col" class="py-3 px-6">Date</th>
+                <th scope="col" class="py-3 px-6">Project Number</th>
+                </tr>
+            </thead>
+            <tbody class="bg-gray-100 space-y-4 p-4">
+                {{#if faqs.length}}
+                    {{#each faqs}}
+                        <tr>
+                    <form action="/faqs/edit/{{id}}" method="post">
+                            <td contenteditable="true" class="hover:text-primary_color py-3 px-6"><input type="text" name="post_question" value="{{post_question}}" class="bg-gray-100 py-2 px-4"></td>
+                            <td contenteditable="true" class="hover:text-primary_color py-3 px-6"><input type="text" name="post_answer" value="{{post_answer}}" class="bg-gray-100 py-2 px-4"></td>
+                            <td contenteditable="true" class="hover:text-primary_color py-3 px-6"><input type="text" name="post_date" value="{{post_date}}" class="bg-gray-100 py-2 px-4"></td>
+                            <td contenteditable="true" class="hover:text-primary_color py-3 px-6"><input type="number" name="projectid" value="{{projectid}}" class="bg-gray-100 py-2 px-4"></td>
+                            <td><input type="submit" value="Confirm edit" class="mt-[35px] mb-[35px] bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color" name="edit_faq_posts" id="edit_faq_posts"></td>
+                    </form>
+                        </tr>
+                    {{/each}}
+                {{else}}
+                    <p>There are no faq posts at the moment.</p>
+                {{/if}}
+            </tbody>
+        </table>
 </div>

@@ -7,7 +7,7 @@ const project_name_max_chara = 100
 const admin_username = "Bassima"
 const admin_password = "2003"
 
-const db = new sqlite3.Database("projects_database.db")
+const db = new sqlite3.Database("portfolio_database.db")
 
 db.run(`
     CREATE TABLE IF NOT EXISTS projects (
@@ -18,20 +18,14 @@ db.run(`
     )`
 )
 
-// is it gonna make it harder for me if i add foreign keys to different tables?
-// how to add DATE in a database table.
-// how to edit database values inside vscode
-// how to add projects to a database table from the website (i have issues with it maybe because of me having a lot of pages?).
-// is it possible to add a layout and a data object in a render property.
-// can i copy tailwind componenets from the internet (search bar, pagination, etc.).
-
 db.run(`
     CREATE TABLE IF NOT EXISTS blogs (
         id INTEGER PRIMARY KEY,
         post_title TEXT,
         post_text TEXT,
         post_date TEXT,
-        FOREIGN KEY (id) REFERENCES projects(id)
+        projectid INTEGER,
+        FOREIGN KEY (projectid) REFERENCES projects (id)
     )`
 )
 
@@ -41,7 +35,8 @@ db.run(`
         post_question TEXT,
         post_answer TEXT,
         post_date TEXT,
-        FOREIGN KEY (id) REFERENCES projects(id)
+        projectid INTEGER,
+        FOREIGN KEY (projectid) REFERENCES projects (id)
     )`
 )
 
@@ -120,6 +115,48 @@ app.get("/projects/:id", function(req, res){
     })
     
 })
+
+app.get("/projects/:id/project_blog", function(req, res){
+    const id = req.params.id
+    const query = `SELECT * FROM projects WHERE id = ? `
+    const values = [id]
+
+    db.get(query, values, function(error, project) {
+        const id = req.params.id
+        const query = `SELECT * FROM blogs WHERE projectid = ? `
+        const values = [id]
+
+        db.all(query, values, function(error, blogs) {
+            const model = {
+                project,
+                blogs
+            }
+            res.render("project_blog.hbs", model)
+        })
+    })
+    
+})
+
+app.get("/projects/:id/project_faq", function(req, res){
+    const id = req.params.id
+    const query = `SELECT * FROM projects WHERE id = ? `
+    const values = [id]
+
+    db.get(query, values, function(error, project) {
+        const id = req.params.id
+        const query = `SELECT * FROM faqs WHERE projectid = ? `
+        const values = [id]
+
+        db.all(query, values, function(error, faqs) {
+            const model = {
+                project,
+                faqs
+            }
+            res.render("project_faq.hbs", model)
+        })
+    })
+    
+})
 // login page (only the admin can enter the correct values)
 app.get("/login", function(req, res){
     res.render("login.hbs")
@@ -182,11 +219,60 @@ app.post("/projects/add", function(req, res){
 app.get("/admin_blog", function(req, res){
     res.render("admin_blog.hbs", {layout: "admin.hbs"})
 })
+app.post("/blogs/add", function(req, res){
+    const post_title = req.body.post_title
+    const post_text = req.body.post_text
+    const post_date = req.body.post_date
+    const projectid = req.body.projectid
+
+    const errorMessage = []
+
+    if (post_title == "") {
+        errorMessage.push("name cant be empty")
+    } else if (post_title.length > project_name_max_chara) {
+        errorMessage.push("name should be less than " + project_name_max_chara + " charachters")
+    }
+
+    const query = `
+        INSERT INTO blogs (post_title, post_text, post_date, projectid) VALUES (?, ?, ?, ?)
+    `
+    const values = [post_title, post_text, post_date, projectid]
+
+    db.run(query, values, function(error){
+        res.redirect("/blog_edit")
+    })
+})
+
 
 // faq add page
 app.get("/admin_faq", function(req, res){
     res.render("admin_faq.hbs", {layout: "admin.hbs"})
 })
+
+app.post("/faqs/add", function(req, res){
+    const post_question = req.body.post_question
+    const post_answer = req.body.post_answer
+    const post_date = req.body.post_date
+    const projectid = req.body.projectid
+
+    const errorMessage = []
+
+    if (post_question == "") {
+        errorMessage.push("name cant be empty")
+    } else if (post_question.length > project_name_max_chara) {
+        errorMessage.push("name should be less than " + project_name_max_chara + " charachters")
+    }
+
+    const query = `
+        INSERT INTO faqs (post_question, post_answer, post_date, projectid) VALUES (?, ?, ?, ?)
+    `
+    const values = [post_question, post_answer, post_date, projectid]
+
+    db.run(query, values, function(error){
+        res.redirect("/faq_edit")
+    })
+})
+
 
 //INSIDE THE MAIN PAGES
 
@@ -206,7 +292,7 @@ app.get("/projects_edit", function(req, res){
 
 })
 
-app.get("/project/edit", function(req, res){
+app.post("/projects/edit/:id", function(req, res){
     const id = req.params.id
     const project_name = req.body.project_name
     const project_sub_headline = req.body.project_sub_headline
@@ -243,22 +329,173 @@ app.get("/projects_remove", function(req, res){
     }) 
 })
 
+app.post("/projects/remove/:id", function(req, res){
+    const id = req.params.id
+
+    const errorMessage = []
+
+    const query = `
+    DELETE FROM projects WHERE id = ?
+    `
+
+    const values = [id]
+
+    db.run(query, values, function(error) {
+        if(error) {
+            res.redirect("/dashboard")
+        } else {
+            res.redirect("/admin_projects")
+        }
+
+    })
+})
+
 //blog (edit, remove)
 app.get("/blog_edit", function(req, res){
-    res.render("blog_edit.hbs", {layout: "admin.hbs"})
+    
+    const query = `SELECT * FROM blogs`
+
+    db.all(query, function(error, blogs) {
+        const model = {
+            blogs,
+            layout: "admin.hbs"
+        }
+
+        res.render("blog_edit.hbs", model)
+    }) 
+})
+
+app.post("/blogs/edit/:id", function(req, res){
+    const id = req.params.id
+    const post_title = req.body.post_title
+    const post_text = req.body.post_text
+    const post_date = req.body.post_date
+    const projectid = req.body.projectid
+
+    const errorMessage = []
+
+    const query = `
+    UPDATE blogs SET post_title = ?, post_text = ?, post_date = ?, projectid = ? WHERE id = ?
+    `
+
+    const values = [post_title, post_text, post_date, projectid, id]
+
+    db.run(query, values, function(error) {
+        if(error) {
+            res.redirect("/dashboard")
+        } else {
+            res.redirect("/admin_blog")
+        }
+
+    })
 })
 
 app.get("/blog_remove", function(req, res){
-    res.render("blog_remove.hbs", {layout: "admin.hbs"})
+    const query = `SELECT * FROM blogs`
+
+    db.all(query, function(error, blogs) {
+        const model = {
+            blogs,
+            layout: "admin.hbs"
+        }
+
+        res.render("blog_remove.hbs", model)
+    }) 
+})
+
+app.post("/blogs/remove/:id", function(req, res){
+    const id = req.params.id
+
+    const errorMessage = []
+
+    const query = `
+    DELETE FROM blogs WHERE id = ?
+    `
+
+    const values = [id]
+
+    db.run(query, values, function(error) {
+        if(error) {
+            res.redirect("/dashboard")
+        } else {
+            res.redirect("/admin_blog")
+        }
+
+    })
 })
 
 //faq (edit, remove)
 app.get("/faq_edit", function(req, res){
-    res.render("faq_edit.hbs", {layout: "admin.hbs"})
+        
+    const query = `SELECT * FROM faqs`
+
+    db.all(query, function(error, faqs) {
+        const model = {
+            faqs,
+            layout: "admin.hbs"
+        }
+
+        res.render("faq_edit.hbs", model)
+    }) 
+})
+
+app.post("/faqs/edit/:id", function(req, res){
+    const id = req.params.id
+    const post_question = req.body.post_question
+    const post_answer = req.body.post_answer
+    const post_date = req.body.post_date
+    const projectid = req.body.projectid
+
+    const errorMessage = []
+
+    const query = `
+    UPDATE faqs SET post_question = ?, post_answer = ?, post_date = ?, projectid = ? WHERE id = ?
+    `
+
+    const values = [post_question, post_answer, post_date, projectid, id]
+
+    db.run(query, values, function(error) {
+        if(error) {
+            res.redirect("/dashboard")
+        } else {
+            res.redirect("/admin_faq")
+        }
+
+    })
 })
 
 app.get("/faq_remove", function(req, res){
-    res.render("faq_remove.hbs", {layout: "admin.hbs"})
+    const query = `SELECT * FROM faqs`
+
+    db.all(query, function(error, faqs) {
+        const model = {
+            faqs,
+            layout: "admin.hbs"
+        }
+
+        res.render("faq_remove.hbs", model)
+    }) 
+})
+
+app.post("/faqs/remove/:id", function(req, res){
+    const id = req.params.id
+
+    const errorMessage = []
+
+    const query = `
+    DELETE FROM faqs WHERE id = ?
+    `
+
+    const values = [id]
+
+    db.run(query, values, function(error) {
+        if(error) {
+            res.redirect("/dashboard")
+        } else {
+            res.redirect("/admin_faq")
+        }
+
+    })
 })
 
 

@@ -24,7 +24,6 @@
     <table class="table-fixed mt-[15px]">
         <thead class="bg-gray-50 p-4">
             <tr>
-                <th scope="col" class="py-3 px-6">Select</th>
                 <th scope="col" class="py-3 px-6">Name</th>
                 <th scope="col" class="py-3 px-6">Sub-headline</th>
                 <th scope="col" class="py-3 px-6">Description</th>
@@ -34,14 +33,12 @@
             {{#if projects.length}}
                 {{#each projects}}
                     <tr>
-                        <td>
-                            <div class="flex items-center py-3 px-6">
-                                <input type="checkbox" id="checkbox" class="w-4 h-4 accent-primary_color rounded border-gray-300">
-                            </div>
-                        </td>
+                        <form action="/projects/remove/{{id}}" class="mt-[35px] space-y-4" method="post">
                         <td class="py-3 px-6">{{project_name}}</td>
                         <td class="py-3 px-6">{{project_sub_headline}}</td>
                         <td class="py-3 px-6">{{project_description}}</td>
+                        <td><input type="submit" value="Remove" class="bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color" name="add_post" id="add_post"></td>
+                        </form>
                     </tr>
 
                 {{/each}}
@@ -50,8 +47,4 @@
             {{/if}}
         </tbody>
     </table>
-
-    <form action="" class="mt-[35px] space-y-4">
-        <input type="submit" value="Remove" class="bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color" name="add_post" id="add_post">
-    </form>
 </div>

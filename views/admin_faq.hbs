@@ -10,20 +10,25 @@
         </ul>
     </div>
 
-    <form action="" class="mt-[35px] bg-gray-100 space-y-4 p-4">
+    <form action="/faqs/add" method="post" class="mt-[35px] bg-gray-100 space-y-4 p-4">
+        <div class="flex flex-row gap-4 whitespace-nowrap">
+            <label for="post_question">Project id: </label>
+            <input type="number" name="projectid" id="post_question">
+        </div>
+
         <div class="flex flex-row gap-4 whitespace-nowrap">
             <label for="post_question">Post question: </label>
-            <input type="text" id="post_question">
+            <input type="text" name="post_question" id="post_question">
         </div>
 
         <div class="flex flex-row gap-4 whitespace-nowrap">
             <label for="post_answer">Post answer: </label>
-            <textarea id="post_answer" class="form-textarea mt-1 block w-full" rows="3" placeholder="Enter post answer"></textarea>
+            <textarea id="post_answer" name="post_answer" class="form-textarea mt-1 block w-full" rows="3" placeholder="Enter post answer"></textarea>
         </div>
 
         <div class="flex flex-row gap-4 whitespace-nowrap">
             <label for="post_date">Post date: </label>
-            <input type="date" id="post_date">
+            <input type="date" name="post_date" id="post_date">
         </div>
 
         <input type="submit" class="bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color" name="add_post" id="add_post">

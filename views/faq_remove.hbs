@@ -10,9 +10,31 @@
         </ul>
     </div>
 
-    <form action="" class="mt-[35px] space-y-4">
-        <h1>gonna add a table here</h1>
-
-        <input type="submit" value="Remove" class="mt-[35px] bg-primary_color text-white font-light py-2 px-4 rounded" name="add_post" id="add_post">
-    </form>
+        <table class="table-fixed mt-[15px]">
+        <thead class="bg-gray-50 p-4">
+            <tr>
+                <th scope="col" class="py-3 px-6">Post Question</th>
+                <th scope="col" class="py-3 px-6">Post Answer</th>
+                <th scope="col" class="py-3 px-6">Date</th>
+                <th scope="col" class="py-3 px-6">Project Number</th>
+            </tr>
+        </thead>
+        <tbody class="bg-gray-100 space-y-4 p-4">
+            {{#if faqs.length}}
+                {{#each faqs}}
+                    <tr>
+                        <form action="/faqs/remove/{{id}}" class="mt-[35px] space-y-4" method="post">
+                        <td class="py-3 px-6">{{post_question}}</td>
+                        <td class="py-3 px-6">{{post_answer}}</td>
+                        <td class="py-3 px-6">{{post_date}}</td>
+                        <td class="py-3 px-6">{{projectid}}</td>
+                        <td><input type="submit" value="Remove" class="bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color" name="add_post" id="add_post"></td>
+                        </form>
+                    </tr>
+                {{/each}}
+                {{else}}
+                    <p>There are no projects at the moment.</p>
+            {{/if}}
+        </tbody>
+    </table>
 </div>
