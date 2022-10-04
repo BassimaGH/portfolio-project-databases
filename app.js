@@ -5,7 +5,18 @@ const sqlite3 = require("sqlite3")
 const expressSession = require("express-session")
 
 // APP GLOBAL VARIABLES VALUES
-const project_name_max_chara = 100
+// text and numbers character limits
+const max_chara_20 = 20
+const max_chara_50 = 50
+const max_chara_100 = 100
+
+const min_chara_3 = 3
+const min_chara_7 = 7
+const min_chara_20 = 20
+
+const min_project_id_number = 1
+
+// user name and password values
 const admin_username = "Bassima"
 const admin_password = "2003"
 
@@ -13,6 +24,7 @@ const admin_password = "2003"
 const db = new sqlite3.Database("portfolio_database.db")
 
 // PROJECTS TABLE
+// (RUNS THE SQL QUERY AND RETURNS A DATABASE OBJECT)
 db.run(`
 	CREATE TABLE IF NOT EXISTS projects (
 		id INTEGER PRIMARY KEY,
@@ -100,53 +112,89 @@ app.get("/projects", function(req, res){
 	// THIS QUERY SELECTS ALL FROM A CERTAIN TABLE
 	const query = `SELECT * FROM projects`
 
-	const error_message = []
-
 	db.all(query, function(error, projects) {
 
-		const model = {
-			projects 
-		}
+		const error_messages = []
 
 		if (error){
-			error_message.push("Internal server error!")
-		} else{
-			res.render("projects.hbs", model)
+			error_messages.push("Internal server error!")
 		}
+
+		const model = {
+			projects,
+			error_messages 
+		}
+
+		res.render("projects.hbs", model)
 
 	})
 })
 
-// NEED TO ADD PROJECT DETAILS PAGES USING A DATABASE
+// DISPLAYS A SINGLE PROJECT DETAILS PAGE
 app.get("/projects/:id", function(req, res){
+	// REQUESTS THE ID FROM AN OBJECT CONTAINING PROPERTIES MAPPED TO THE NAMED ROUTE “parameters” (GETS THE ID VALUE FROM A URL LIKE "/projects/:id")
 	const id = req.params.id
+	// THIS QUERY SELECTS FROM A CERTAIN TABLE WHERE THE ID IS EQUAL TO THE ID REQUESTED
 	const query = `SELECT * FROM projects WHERE id = ?`
+	// STORE THE VALUE FROM THAT OBJECT TO AN ARRAY
 	const values = [id]
 
+	// (RUNS THE SQL QUERY AND RETURNS A DATABASE OBJECT RESULT ROW) 
 	db.get(query, values, function(error, project) {
+
+		const error_messages = []
+
+		if (error){
+			error_messages.push("Internal server error!")
+		}
+
 		const model = {
 			project,
+			error_messages
 		}
+
 		res.render("project_details.hbs", model)
+
 	})
-	
+
 })
 
 app.get("/projects/:id/project_blog", function(req, res){
+	// REQUESTS THE ID FROM AN OBJECT CONTAINING PROPERTIES MAPPED TO THE NAMED ROUTE “parameters” (GETS THE ID VALUE FROM A URL LIKE "/projects/:id")
 	const id = req.params.id
+	// THIS QUERY SELECTS FROM A CERTAIN TABLE WHERE THE ID IS EQUAL TO THE ID REQUESTED
 	const query = `SELECT * FROM projects WHERE id = ? `
+	// STORE THE VALUE FROM THAT OBJECT TO AN ARRAY
 	const values = [id]
 
+	// (RUNS THE SQL QUERY AND RETURNS A DATABASE OBJECT RESULT ROW) 
 	db.get(query, values, function(error, project) {
+		// REQUESTS THE ID FROM AN OBJECT CONTAINING PROPERTIES MAPPED TO THE NAMED ROUTE “parameters” (GETS THE ID VALUE FROM A URL LIKE "/projects/:id")
 		const id = req.params.id
+		// THIS QUERY SELECTS FROM A CERTAIN TABLE WHERE THE ID IS EQUAL TO THE ID REQUESTED
 		const query = `SELECT * FROM blogs WHERE projectid = ? `
+		// STORE THE VALUE FROM THAT OBJECT TO AN ARRAY
 		const values = [id]
 
+		const error_messages = []
+
+		if (error){
+			error_messages.push("Internal server error!")
+		}
+
+		// (RUNS THE SQL QUERY AND RETURNS ALL DATABASE OBJECT RESULT ROWA) 
 		db.all(query, values, function(error, blogs) {
+
+			if (error){
+				error_messages.push("Internal server error!")
+			}
+	
 			const model = {
 				project,
-				blogs
+				blogs,
+				error_messages 
 			}
+
 			res.render("project_blog.hbs", model)
 		})
 	})
@@ -154,21 +202,42 @@ app.get("/projects/:id/project_blog", function(req, res){
 })
 
 app.get("/projects/:id/project_faq", function(req, res){
+	// REQUESTS THE ID FROM AN OBJECT CONTAINING PROPERTIES MAPPED TO THE NAMED ROUTE “parameters” (GETS THE ID VALUE FROM A URL LIKE "/projects/:id")
 	const id = req.params.id
+	// THIS QUERY SELECTS FROM A CERTAIN TABLE WHERE THE ID IS EQUAL TO THE ID REQUESTED
 	const query = `SELECT * FROM projects WHERE id = ? `
+	// STORE THE VALUE FROM THAT OBJECT TO AN ARRAY
 	const values = [id]
 
 	db.get(query, values, function(error, project) {
+		// REQUESTS THE ID FROM AN OBJECT CONTAINING PROPERTIES MAPPED TO THE NAMED ROUTE “parameters” (GETS THE ID VALUE FROM A URL LIKE "/projects/:id")
 		const id = req.params.id
+		// THIS QUERY SELECTS FROM A CERTAIN TABLE WHERE THE ID IS EQUAL TO THE ID REQUESTED
 		const query = `SELECT * FROM faqs WHERE projectid = ? `
+		// STORE THE VALUE FROM THAT OBJECT TO AN ARRAY
 		const values = [id]
 
+		const error_messages = []
+
+		if (error){
+			error_messages.push("Internal server error!")
+		}
+
+		// (RUNS THE SQL QUERY AND RETURNS ALL DATABASE OBJECT RESULT ROWA) 
 		db.all(query, values, function(error, faqs) {
+
+			if (error){
+				error_messages.push("Internal server error!")
+			}
+
 			const model = {
 				project,
-				faqs
+				faqs,
+				error_messages
 			}
+
 			res.render("project_faq.hbs", model)
+
 		})
 	})
 	
@@ -178,21 +247,43 @@ app.get("/login", function(req, res){
 	res.render("login.hbs")
 })
 
-app.post("/login", function (req, res) {
+app.post("/login", function (req, res){
+	// STORES THE KEY-VALUE PAIRS OF DATA (USERNAME, PASSWORD) SUBMITTED IN THE REQUEST BODY IN A VARIABLE
 	const username = req.body.username
 	const password = req.body.password
 
-	if (username == admin_username && password == admin_password) {
+	// CHECKS IF THE USER INPUTES THE CORRECT USERNAME AND PASSWORD
+	if (username == admin_username && password == admin_password){
+		// SETS THE LOGIN SESSION TO TRUE
 		req.session.isLoggedIn = true
 
 		res.redirect("/dashboard")
-	} else {
+	} else{
 		const model = {
+			// STORES THE LOGIN SESSION STATUS TO FALSE IN A VARIABLE
 			failed_to_login: true
 		}
 
 		res.render("login.hbs", model)
 	}
+})
+
+app.post("/logout", function(req, res) {
+	const successfull_messages = []
+
+	req.session.isLoggedIn = false
+
+	if (isLoggedIn = false) {
+		successfull_messages.push("Successfully logged out!")
+		res.redirect("/")
+	}
+
+	if (successfull_messages.length) {
+		const model = {
+			successfull_messages,
+		}
+		res.render("/", model)
+	} 
 })
 // RENDERS THE PAGES (ADMIN SIDE)
 
@@ -209,26 +300,78 @@ app.get("/admin_projects", function(req, res){
 })
 
 app.post("/projects/add", function(req, res){
+	// STORES THE KEY-VALUE PAIRS OF DATA (project_name, project_sub_headline, project_description) SUBMITTED IN THE REQUEST BODY IN VARIABLES
 	const project_name = req.body.project_name
 	const project_sub_headline = req.body.project_sub_headline
 	const project_description = req.body.project_description
 
-	const errorMessage = []
+	const error_messages = []
 
+	// CONDITIONS FOR THE PROJECT NAME
 	if (project_name == "") {
-		errorMessage.push("name cant be empty")
-	} else if (project_name.length > project_name_max_chara) {
-		errorMessage.push("name should be less than " + project_name_max_chara + " charachters")
+		error_messages.push("Project name should not be empty")
+	} else if (project_name.length > max_chara_20) {
+		error_messages.push("Project name should be less than " + max_chara_20 + " characters")
+	} else if (project_name.length < min_chara_3) {
+		error_messages.push("Project name should be more than " + min_chara_3 + " characters")
 	}
 
-	const query = `
-		INSERT INTO projects (project_name, project_sub_headline, project_description) VALUES (?, ?, ?)
-	`
-	const values = [project_name, project_sub_headline, project_description]
+	// CONDITIONS FOR THE PROJECT SUB-HEADLINE
+	if (project_sub_headline == "") {
+		error_messages.push("Project sub-headline should not be empty")
+	} else if (project_sub_headline.length > max_chara_50) {
+		error_messages.push("Project sub-headline should be less than " + max_chara_50 + " characters")
+	} else if (project_sub_headline.length < min_chara_7) {
+		error_messages.push("Project sub-headline should be more than " + min_chara_7 + " characters")
+	} 
 
-	db.run(query, values, function(error){
-		res.redirect("/projects_edit")
-	})
+	// CONDITIONS FOR THE PROJECT DESCRIPTION
+	if (project_description == "") {
+		error_messages.push("Project description should not be empty")
+	} else if (project_description.length > max_chara_100) {
+		error_messages.push("Project description should be less than " + max_chara_100 + " characters")
+	} else if (project_description.length < min_chara_20) {
+		error_messages.push("Project description should be more than " + min_chara_20 + " characters")
+	}
+
+	if (error_messages.length == 0){
+		// THIS QUERY INSERTS VALUES FETCHED FROM THE WEB APPLICATION INTO THE SPECIFIED TABLE
+		const query = `
+		INSERT INTO projects (project_name, project_sub_headline, project_description) VALUES (?, ?, ?)
+		`
+		// STORES THE FETCHED VALUES INTO AN ARRAY
+		const values = [project_name, project_sub_headline, project_description]
+
+		db.run(query, values, function(error){
+			if (error){
+
+				error_messages.push("Internal server error!")
+	
+				const model = {
+					project_name,
+					project_sub_headline,
+					project_description,
+					error_messages,
+					layout: "admin.hbs"
+				}
+	
+				res.render("admin_projects.hbs", model)
+			} else{
+				res.redirect("/projects_edit")
+			}
+		})
+	} else{
+		const model = {
+			project_name,
+			project_sub_headline,
+			project_description,
+			error_messages,
+			layout: "admin.hbs"
+		}
+
+		res.render("admin_projects.hbs", model)
+	}
+	
 })
 
 // blog add page
@@ -242,22 +385,74 @@ app.post("/blogs/add", function(req, res){
 	const post_date = req.body.post_date
 	const projectid = req.body.projectid
 
-	const errorMessage = []
+	const error_messages = []
 
 	if (post_title == "") {
-		errorMessage.push("name cant be empty")
-	} else if (post_title.length > project_name_max_chara) {
-		errorMessage.push("name should be less than " + project_name_max_chara + " charachters")
+		error_messages.push("Post title should not be empty")
+	} else if (post_title.length > max_chara_20) {
+		error_messages.push("Post title should be less than " + max_chara_20 + " characters")
+	} else if (post_title.length < min_chara_3) {
+		error_messages.push("Post title should be more than " + min_chara_3 + " characters")
 	}
 
-	const query = `
-		INSERT INTO blogs (post_title, post_text, post_date, projectid) VALUES (?, ?, ?, ?)
-	`
-	const values = [post_title, post_text, post_date, projectid]
+	if (post_text == "") {
+		error_messages.push("Post text should not be empty")
+	} else if (post_text.length > max_chara_100) {
+		error_messages.push("Post text should be less than " + max_chara_100 + " characters")
+	} else if (post_text.length < min_chara_20) {
+		error_messages.push("Post text should be more than " + min_chara_20 + " characters")
+	}
 
-	db.run(query, values, function(error){
-		res.redirect("/blog_edit")
-	})
+	if (post_date == "") {
+		error_messages.push("Post date should not be empty")
+	}
+
+	if (projectid == "") {
+		error_messages.push("Project id should not be empty")
+	} else if (projectid < min_project_id_number) {
+		error_messages.push("Project id should not be less than " + min_project_id_number)
+	}
+
+	if (error_messages.length == 0) {
+
+		const query = `
+			INSERT INTO blogs (post_title, post_text, post_date, projectid) VALUES (?, ?, ?, ?)
+		`
+		const values = [post_title, post_text, post_date, projectid]
+
+		db.run(query, values, function(error){
+			if (error){
+				error_messages.push("Internal server error!")
+
+				const model = {
+					post_title,
+					post_text,
+					post_date,
+					projectid,
+					error_messages,
+					layout: "admin.hbs"
+				}
+
+				res.render("admin_blog.hbs", model)
+			} else{
+				res.redirect("/admin_blog")
+			}
+		})
+
+	} else{
+		const model = {
+			post_title,
+			post_text,
+			post_date,
+			projectid,
+			error_messages,
+			layout: "admin.hbs"
+		}
+
+		res.render("admin_blog.hbs", model)
+	}
+
+
 })
 
 
@@ -272,22 +467,72 @@ app.post("/faqs/add", function(req, res){
 	const post_date = req.body.post_date
 	const projectid = req.body.projectid
 
-	const errorMessage = []
+	const error_messages = []
 
 	if (post_question == "") {
-		errorMessage.push("name cant be empty")
-	} else if (post_question.length > project_name_max_chara) {
-		errorMessage.push("name should be less than " + project_name_max_chara + " charachters")
+		error_messages.push("Post question should not be empty")
+	} else if (post_question.length > max_chara_20) {
+		error_messages.push("Post question should be less than " + max_chara_20 + " characters")
+	} else if (post_question.length < min_chara_3) {
+		error_messages.push("Post question should be more than " + min_chara_3 + " characters")
 	}
 
-	const query = `
-		INSERT INTO faqs (post_question, post_answer, post_date, projectid) VALUES (?, ?, ?, ?)
-	`
-	const values = [post_question, post_answer, post_date, projectid]
+	if (post_answer == "") {
+		error_messages.push("Post answer should not be empty")
+	} else if (post_answer.length > max_chara_100) {
+		error_messages.push("Post answer should be less than " + max_chara_100 + " characters")
+	} else if (post_answer.length < min_chara_20) {
+		error_messages.push("Post answer should be more than " + min_chara_20 + " characters")
+	}
 
-	db.run(query, values, function(error){
-		res.redirect("/faq_edit")
-	})
+	if (post_date == "") {
+		error_messages.push("Post date should not be empty")
+	}
+
+	if (projectid == "") {
+		error_messages.push("Project id should not be empty")
+	} else if (projectid < min_project_id_number) {
+		error_messages.push("Project id should not be less than " + min_project_id_number)
+	}
+
+	if (error_messages.length == 0) {
+		const query = `
+			INSERT INTO faqs (post_question, post_answer, post_date, projectid) VALUES (?, ?, ?, ?)
+		`
+		const values = [post_question, post_answer, post_date, projectid]
+
+		db.run(query, values, function(error){
+			if (error){
+				error_messages.push("Internal server error!")
+
+				const model = {
+					post_question,
+					post_answer,
+					post_date,
+					projectid,
+					error_messages,
+					layout: "admin.hbs"
+				}
+
+				res.render("admin_faq.hbs", model)
+			} else{
+				res.redirect("/admin_faq")
+			}
+		})
+	} else{
+		const model = {
+			post_question,
+			post_answer,
+			post_date,
+			projectid,
+			error_messages,
+			layout: "admin.hbs"
+		}
+
+		res.render("admin_faq.hbs", model)
+	}
+
+	
 })
 
 
@@ -315,22 +560,80 @@ app.post("/projects/edit/:id", function(req, res){
 	const project_sub_headline = req.body.project_sub_headline
 	const project_description = req.body.project_description
 
-	const errorMessage = []
+	const error_messages = []
 
-	const query = `
-	UPDATE projects SET project_name = ?, project_sub_headline = ?, project_description = ? WHERE id = ?
-	`
+	// CONDITIONS FOR THE PROJECT NAME
+	if (project_name == "") {
+		error_messages.push("Project name should not be empty")
+	} else if (project_name.length > max_chara_20) {
+		error_messages.push("Project name should be less than " + max_chara_20 + " characters")
+	} else if (project_name.length < min_chara_3) {
+		error_messages.push("Project name should be more than " + min_chara_3 + " characters")
+	}
 
-	const values = [project_name, project_sub_headline, project_description, id]
+	// CONDITIONS FOR THE PROJECT SUB-HEADLINE
+	if (project_sub_headline == "") {
+		error_messages.push("Project sub-headline should not be empty")
+	} else if (project_sub_headline.length > max_chara_50) {
+		error_messages.push("Project sub-headline should be less than " + max_chara_50 + " characters")
+	} else if (project_sub_headline.length < min_chara_7) {
+		error_messages.push("Project sub-headline should be more than " + min_chara_7 + " characters")
+	} 
 
-	db.run(query, values, function(error) {
-		if(error) {
-			res.redirect("/dashboard")
-		} else {
-			res.redirect("/admin_projects")
+	// CONDITIONS FOR THE PROJECT DESCRIPTION
+	if (project_description == "") {
+		error_messages.push("Project description should not be empty")
+	} else if (project_description.length > max_chara_100) {
+		error_messages.push("Project description should be less than " + max_chara_100 + " characters")
+	} else if (project_description.length < min_chara_20) {
+		error_messages.push("Project description should be more than " + min_chara_20 + " characters")
+	}
+
+
+	if (error_messages.length == 0) {
+
+		const query = `
+			UPDATE projects SET project_name = ?, project_sub_headline = ?, project_description = ? WHERE id = ?
+		`
+
+		const values = [project_name, project_sub_headline, project_description, id]
+
+		db.run(query, values, function(error) {
+			if(error) {
+				error_messages.push("Internal server error!")
+
+				const model = {
+					id,
+					project_name,
+					project_sub_headline,
+					project_description,
+					error_messages,
+					layout: "admin.hbs"
+				}
+
+				res.render("projects_edit.hbs", model)
+			} else {
+				res.redirect("/projects_edit")
+			}
+	
+		})
+	} else{
+
+		const model = {
+			id,
+			project_name,
+			project_sub_headline,
+			project_description,
+			error_messages,
+			layout: "admin.hbs"
 		}
 
-	})
+		res.render("projects_edit.hbs", model)
+	}
+	
+
+
+	
 })
 
 app.get("/projects_remove", function(req, res){

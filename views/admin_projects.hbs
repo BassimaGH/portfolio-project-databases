@@ -11,15 +11,26 @@
 		</ul>
 	</div>
 
-	<form action="/projects/add" method="post" class="mt-[35px] bg-gray-100 p-4 space-y-4">
+	{{#if error_messages.length}}
+		<div class="p-4 space-y-4 rounded mt-[35px] border-4 border-red-600">
+			<h3 class="font-bold mt-5">Couldn't create the project because:</h3>
+			<ul class="mt-4 list-disc p-4">
+				{{#each error_messages}}
+					<li class="text-red-600 font-bold">{{this}}</li>
+				{{/each}}
+			</ul>
+		</div>
+	{{/if}}
+
+	<form action="/projects/add" method="post" class="mt-[35px] mb-[35px] bg-gray-100 p-4 space-y-4">
 		<div class="flex flex-row gap-4 whitespace-nowrap">
 			<label for="project_name">Project name: </label>
-			<input name="project_name" type="text" id="project_name">
+			<input name="project_name" type="text" id="project_name" value="{{project_name}}">
 		</div>
 
 		<div class="flex flex-row gap-4 whitespace-nowrap">
 			<label for="project_sub_headline">Project sub-headline: </label>
-			<input type="text" name="project_sub_headline" id="project_sub_headline">
+			<input type="text" name="project_sub_headline" id="project_sub_headline" value="{{project_sub_headline}}">
 		</div>
 
 		<div class="flex flex-row gap-4 whitespace-nowrap">

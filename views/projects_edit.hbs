@@ -24,20 +24,24 @@
 		</div>
 	</div>
 
-	{{#if errorMessages.length}}
-	<ul>
-		{{#each errorMessages}}
-			<li>{{this}}</li>
-		{{/each}}
-	</ul>
-	{{/if}}
+	{{#if error_messages.length}}
+		<div class="p-4 space-y-4 rounded mt-[35px] border-4 border-red-600">
+			<h3 class="font-bold mt-5">Couldn't edit the project because:</h3>
+			<ul class="mt-4 list-disc p-4">
+				{{#each error_messages}}
+					<li class="text-red-600 font-bold">{{this}}</li>
+				{{/each}}
+			</ul>
+		</div>
+	{{else}}
 
-	<table class="table-fixed mt-[15px]">
+	<table class="table-fixed mt-[15px] mb-[4vw]">
 		<thead class="bg-gray-50 p-4">
 			<tr>
-				<th scope="col" class="py-3 px-6">Name</th>
-				<th scope="col" class="py-3 px-6">Sub-headline</th>
-				<th scope="col" class="py-3 px-6">Description</th>
+				<th scope="col" class="py-3 pl-[2vw] text-start border-4 border-x-gray-300">Name</th>
+				<th scope="col" class="py-3 pl-[2vw] text-start border-4 border-r-gray-300">Sub-headline</th>
+				<th scope="col" class="py-3 pl-[2vw] text-start border-4 border-r-gray-300">Description</th>
+				<th scope="col" class="py-3 pl-[2vw] text-start border-4 border-r-gray-300">Action</th>
 			</tr>
 		</thead>
 		<tbody class="bg-gray-100 space-y-4 p-4">
@@ -45,10 +49,10 @@
 				{{#each projects}}
 					<tr>
 						<form action="/projects/edit/{{id}}" method="post">
-							<td contenteditable="true" class="hover:text-primary_color py-3 px-6"><input type="text" name="project_name" value="{{project_name}}" class="bg-gray-100 py-2 px-4"></td>
-							<td contenteditable="true" class="hover:text-primary_color py-3 px-6"><input type="text" name="project_sub_headline" value="{{project_sub_headline}}" class="bg-gray-100 py-2 px-4"></td>
-							<td contenteditable="true" class="hover:text-primary_color py-3 px-6"><input type="text" name="project_description" value="{{project_description}}" class="bg-gray-100 py-2 px-4"></td>
-							<td><input type="submit" value="Confirm edit" class="mt-[35px] mb-[35px] bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color" name="edit_projects" id="edit_projects"></td>
+							<td class="hover:text-primary_color py-3 pr-[2vw] pl-[1vw] border-4 border-x-gray-300"><input type="text" name="project_name" value="{{project_name}}" class="bg-gray-100 py-2 px-4"></td>
+							<td class="hover:text-primary_color py-3 pr-[2vw] pl-[1vw] border-4 border-r-gray-300"><input type="text" name="project_sub_headline" value="{{project_sub_headline}}" class="bg-gray-100 py-2 px-4"></td>
+							<td class="hover:text-primary_color py-3 pr-[2vw] pl-[1vw] border-4 border-r-gray-300"><input type="text" name="project_description" value="{{project_description}}" class="bg-gray-100 py-2 px-4"></td>
+							<td class="pr-[2vw] pl-[1vw] border-4 border-r-gray-300"><input type="submit" value="Confirm edit" class="mt-[35px] mb-[35px] bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color" name="edit_projects" id="edit_projects"></td>
 						</form>
 					</tr>
 				{{/each}}
@@ -57,4 +61,5 @@
 			{{/if}}
 		</tbody>
 	</table>
+	{{/if}}
 </div>

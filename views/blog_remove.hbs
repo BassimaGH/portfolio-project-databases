@@ -4,7 +4,7 @@
 	<h3 class="text-2xl whitespace-nowrap">Here you can remove blog posts</h3>
 
 	<div>
-		<ul class="flex flex-row gap-4 mt-[35px]">
+		<ul class="flex flex-row gap-10 mt-[35px]">
 			<a href="/admin_blog"><li class="hover:text-hover_color">Add</li></a>
 			<a href="/blog_edit"><li class="hover:text-hover_color">Edit</li></a>
 			<a href="/blog_remove"><li class="text-primary_color">Remove</li></a>
@@ -14,10 +14,11 @@
 	<table class="table-fixed mt-[15px]">
 		<thead class="bg-gray-50 p-4">
 			<tr>
-				<th scope="col" class="py-3 px-6">Title</th>
-				<th scope="col" class="py-3 px-6">Text</th>
-				<th scope="col" class="py-3 px-6">Date</th>
-				<th scope="col" class="py-3 px-6">Project Number</th>
+				<th scope="col" class="py-3 px-6 text-start border-4 border-x-gray-300">Title</th>
+				<th scope="col" class="py-3 px-6 text-start border-4 border-r-gray-300">Text</th>
+				<th scope="col" class="py-3 px-6 text-start border-4 border-r-gray-300">Date</th>
+				<th scope="col" class="py-3 px-6 text-start border-4 border-r-gray-300">Project Number</th>
+				<th scope="col" class="py-3 px-6 text-start border-4 border-r-gray-300">Action</th>
 			</tr>
 		</thead>
 		<tbody class="bg-gray-100 space-y-4 p-4">
@@ -25,11 +26,11 @@
 				{{#each blogs}}
 					<tr>
 						<form action="/blogs/remove/{{id}}" class="mt-[35px] space-y-4" method="post">
-							<td class="py-3 px-6">{{post_title}}</td>
-							<td class="py-3 px-6">{{post_text}}</td>
-							<td class="py-3 px-6">{{post_date}}</td>
-							<td class="py-3 px-6">{{projectid}}</td>
-							<td><input type="submit" value="Remove" class="bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color" name="add_post" id="add_post"></td>
+							<td class="py-3 px-6 border-4 border-x-gray-300">{{post_title}}</td>
+							<td class="py-3 px-6 border-4 border-r-gray-300">{{post_text}}</td>
+							<td class="py-3 px-6 border-4 border-r-gray-300 pr-[4vw] whitespace-nowrap">{{post_date}}</td>
+							<td class="py-3 px-6 border-4 border-r-gray-300">{{projectid}}</td>
+							<td class="border-4 border-r-gray-300 px-[2vw] pb-[2vw]"><input type="submit" value="Remove" class="bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color" name="add_post" id="add_post"></td>
 						</form>
 					</tr>
 				{{/each}}

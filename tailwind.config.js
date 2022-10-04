@@ -14,6 +14,7 @@ module.exports = {
 				nav_body_text_color: "#121212",
 				primary_color: "#FF6701",
 				secondary_color: "#1A3545",
+				darker_secondary_color: "#152a37",
 				hover_color: "#ff3d01"
 			},
 			fontSize: {

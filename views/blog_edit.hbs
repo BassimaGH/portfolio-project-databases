@@ -4,7 +4,7 @@
 	<h3 class="text-2xl whitespace-nowrap">Here you can edit blog posts</h3>
 
 	<div>
-		<ul class="flex flex-row gap-4 mt-[35px]">
+		<ul class="flex flex-row gap-10 mt-[35px]">
 			<a href="/admin_blog"><li class="hover:text-hover_color">Add</li></a>
 			<a href="/blog_edit"><li class="text-primary_color">Edit</li></a>
 			<a href="/blog_remove"><li class="hover:text-hover_color">Remove</li></a>
@@ -14,10 +14,11 @@
 	<table class="table-fixed mt-[15px]">
 		<thead class="bg-gray-50 p-4">
 			<tr>
-				<th scope="col" class="py-3 px-6">Title</th>
-				<th scope="col" class="py-3 px-6">Text</th>
-				<th scope="col" class="py-3 px-6">Date</th>
-				<th scope="col" class="py-3 px-6">Project Number</th>
+				<th scope="col" class="py-3 pl-[2vw] text-start border-4 border-x-gray-300">Title</th>
+				<th scope="col" class="py-3 pl-[2vw] text-start border-4 border-r-gray-300">Text</th>
+				<th scope="col" class="py-3 pl-[2vw] text-start border-4 border-r-gray-300">Date</th>
+				<th scope="col" class="py-3 pl-[2vw] text-start border-4 border-r-gray-300">Project Number</th>
+				<th scope="col" class="py-3 pl-[2vw] text-start border-4 border-r-gray-300">Action</th>
 			</tr>
 		</thead>
 		<tbody class="bg-gray-100 space-y-4 p-4">
@@ -25,11 +26,11 @@
 				{{#each blogs}}
 					<tr>
 						<form action="/blogs/edit/{{id}}" method="post">
-							<td contenteditable="true" class="hover:text-primary_color py-3 px-6"><input type="text" name="post_title" value="{{post_title}}" class="bg-gray-100 py-2 px-4"></td>
-							<td contenteditable="true" class="hover:text-primary_color py-3 px-6"><input type="text" name="post_text" value="{{post_text}}" class="bg-gray-100 py-2 px-4"></td>
-							<td contenteditable="true" class="hover:text-primary_color py-3 px-6"><input type="text" name="post_date" value="{{post_date}}" class="bg-gray-100 py-2 px-4"></td>
-							<td contenteditable="true" class="hover:text-primary_color py-3 px-6"><input type="number" name="projectid" value="{{projectid}}" class="bg-gray-100 py-2 px-4"></td>
-							<td><input type="submit" value="Confirm edit" class="mt-[35px] mb-[35px] bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color" name="edit_blog_posts" id="edit_blog_posts"></td>
+							<td class="hover:text-primary_color py-3 pr-[2vw] pl-[1vw] border-4 border-x-gray-300"><input type="text" name="post_title" value="{{post_title}}" class="bg-gray-100 py-2 px-4"></td>
+							<td class="hover:text-primary_color py-3 pr-[2vw] pl-[1vw] border-4 border-r-gray-300"><input type="text" name="post_text" value="{{post_text}}" class="bg-gray-100 py-2 px-4"></td>
+							<td class="hover:text-primary_color py-3 pr-[2vw] pl-[1vw] border-4 border-r-gray-300"><input type="text" name="post_date" value="{{post_date}}" class="bg-gray-100 py-2 px-4"></td>
+							<td class="hover:text-primary_color py-3 pr-[2vw] pl-[1vw] border-4 border-r-gray-300"><input type="number" name="projectid" value="{{projectid}}" class="bg-gray-100 py-2 px-4"></td>
+							<td class="pr-[2vw] pl-[1vw] border-4 border-r-gray-300"><input type="submit" value="Confirm edit" class="mt-[35px] mb-[35px] bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color" name="edit_blog_posts" id="edit_blog_posts"></td>
 						</form>
 					</tr>
 				{{/each}}

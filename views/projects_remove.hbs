@@ -24,12 +24,13 @@
 		</div>
 	</div>
 
-	<table class="table-fixed mt-[15px]">
+	<table class="table-fixed mt-[15px] mb-[4vw]">
 		<thead class="bg-gray-50 p-4">
 			<tr>
-				<th scope="col" class="py-3 px-6">Name</th>
-				<th scope="col" class="py-3 px-6">Sub-headline</th>
-				<th scope="col" class="py-3 px-6">Description</th>
+				<th scope="col" class="py-3 px-6 text-start border-4 border-x-gray-300">Name</th>
+				<th scope="col" class="py-3 px-6 text-start border-4 border-r-gray-300">Sub-headline</th>
+				<th scope="col" class="py-3 px-6 text-start border-4 border-r-gray-300">Description</th>
+				<th scope="col" class="py-3 px-6 text-start border-4 border-r-gray-300">Action</th>
 			</tr>
 		</thead>
 		<tbody class="bg-gray-100 space-y-4 p-4">
@@ -37,10 +38,10 @@
 				{{#each projects}}
 					<tr>
 						<form action="/projects/remove/{{id}}" class="mt-[35px] space-y-4" method="post">
-							<td class="py-3 px-6">{{project_name}}</td>
-							<td class="py-3 px-6">{{project_sub_headline}}</td>
-							<td class="py-3 px-6">{{project_description}}</td>
-							<td><input type="submit" value="Remove" class="bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color" name="add_post" id="add_post"></td>
+							<td class="py-3 px-6 border-4 border-x-gray-300">{{project_name}}</td>
+							<td class="py-3 px-6 border-4 border-r-gray-300">{{project_sub_headline}}</td>
+							<td class="py-3 px-6 border-4 border-r-gray-300">{{project_description}}</td>
+							<td class="border-4 border-r-gray-300 px-[2vw] pb-[2vw]"><input type="submit" value="Remove" class="bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color" name="add_post" id="add_post"></td>
 						</form>
 					</tr>
 				{{/each}}
