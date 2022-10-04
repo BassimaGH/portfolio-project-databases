@@ -1,40 +1,41 @@
+<!-- content -->
 <div class="mt-[35px]">
-    <h1 class="font-bold text-3xl">Blog posts</h1>
-    <h3 class="text-2xl whitespace-nowrap">Here you can edit blog posts</h3>
+	<h1 class="font-bold text-3xl">Blog posts</h1>
+	<h3 class="text-2xl whitespace-nowrap">Here you can edit blog posts</h3>
 
-    <div>
-        <ul class="flex flex-row gap-4 mt-[35px]">
-            <a href="/admin_blog"><li class="hover:text-hover_color">Add</li></a>
-            <a href="/blog_edit"><li class="text-primary_color">Edit</li></a>
-            <a href="/blog_remove"><li class="hover:text-hover_color">Remove</li></a>
-        </ul>
-    </div>
+	<div>
+		<ul class="flex flex-row gap-4 mt-[35px]">
+			<a href="/admin_blog"><li class="hover:text-hover_color">Add</li></a>
+			<a href="/blog_edit"><li class="text-primary_color">Edit</li></a>
+			<a href="/blog_remove"><li class="hover:text-hover_color">Remove</li></a>
+		</ul>
+	</div>
 
-    <table class="table-fixed mt-[15px]">
-            <thead class="bg-gray-50 p-4">
-                <tr>
-                    <th scope="col" class="py-3 px-6">Title</th>
-                    <th scope="col" class="py-3 px-6">Text</th>
-                    <th scope="col" class="py-3 px-6">Date</th>
-                    <th scope="col" class="py-3 px-6">Project Number</th>
-                </tr>
-            </thead>
-            <tbody class="bg-gray-100 space-y-4 p-4">
-                {{#if blogs.length}}
-                    {{#each blogs}}
-                        <tr>
-                    <form action="/blogs/edit/{{id}}" method="post">
-                            <td contenteditable="true" class="hover:text-primary_color py-3 px-6"><input type="text" name="post_title" value="{{post_title}}" class="bg-gray-100 py-2 px-4"></td>
-                            <td contenteditable="true" class="hover:text-primary_color py-3 px-6"><input type="text" name="post_text" value="{{post_text}}" class="bg-gray-100 py-2 px-4"></td>
-                            <td contenteditable="true" class="hover:text-primary_color py-3 px-6"><input type="text" name="post_date" value="{{post_date}}" class="bg-gray-100 py-2 px-4"></td>
-                            <td contenteditable="true" class="hover:text-primary_color py-3 px-6"><input type="number" name="projectid" value="{{projectid}}" class="bg-gray-100 py-2 px-4"></td>
-                            <td><input type="submit" value="Confirm edit" class="mt-[35px] mb-[35px] bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color" name="edit_blog_posts" id="edit_blog_posts"></td>
-                    </form>
-                        </tr>
-                    {{/each}}
-                {{else}}
-                    <p>There are no blog posts at the moment.</p>
-                {{/if}}
-            </tbody>
-        </table>
+	<table class="table-fixed mt-[15px]">
+		<thead class="bg-gray-50 p-4">
+			<tr>
+				<th scope="col" class="py-3 px-6">Title</th>
+				<th scope="col" class="py-3 px-6">Text</th>
+				<th scope="col" class="py-3 px-6">Date</th>
+				<th scope="col" class="py-3 px-6">Project Number</th>
+			</tr>
+		</thead>
+		<tbody class="bg-gray-100 space-y-4 p-4">
+			{{#if blogs.length}}
+				{{#each blogs}}
+					<tr>
+						<form action="/blogs/edit/{{id}}" method="post">
+							<td contenteditable="true" class="hover:text-primary_color py-3 px-6"><input type="text" name="post_title" value="{{post_title}}" class="bg-gray-100 py-2 px-4"></td>
+							<td contenteditable="true" class="hover:text-primary_color py-3 px-6"><input type="text" name="post_text" value="{{post_text}}" class="bg-gray-100 py-2 px-4"></td>
+							<td contenteditable="true" class="hover:text-primary_color py-3 px-6"><input type="text" name="post_date" value="{{post_date}}" class="bg-gray-100 py-2 px-4"></td>
+							<td contenteditable="true" class="hover:text-primary_color py-3 px-6"><input type="number" name="projectid" value="{{projectid}}" class="bg-gray-100 py-2 px-4"></td>
+							<td><input type="submit" value="Confirm edit" class="mt-[35px] mb-[35px] bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color" name="edit_blog_posts" id="edit_blog_posts"></td>
+						</form>
+					</tr>
+				{{/each}}
+			{{else}}
+				<p>There are no blog posts at the moment.</p>
+			{{/if}}
+		</tbody>
+	</table>
 </div>

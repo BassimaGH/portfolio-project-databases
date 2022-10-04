@@ -1,47 +1,55 @@
+<!-- content -->
 <div class="flex flex-col items-center gap-y-3 mt-[65px] h-screen">
-    <h1 class="text-3xl font-bold">Personal projects</h1>
+	<h1 class="text-3xl font-bold">Personal projects</h1>
 
-    {{#if projects.length}}
-        <ul class="flex flex-row flex-wrap gap-x-3">
-            {{#each projects}}
-                <div class="flex flex-col flex-wrap items-center text-light_nav_body_text_color bg-secondary_color py-[5rem] px-[5rem] m-[35px] rounded">
-                    <h3>{{project_name}}</h3>
-                    <p>{{project_sub_headline}}</p>
-                    <a href="/projects/{{id}}"><button type="button" class="bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color">More</button></a>
-                </div>
-            {{/each}}
-        </ul>
-        {{else}}
-        <p>There are no projects at the moment.</p>
-    {{/if}}
+	{{#if error_message.length}}
+		<h3>Couldn't fetch the projects because:</h3>
+		<ul>
+			{{#each error_message}}
+				<li class="text-red-600 mt-10 font-bold">{{this}}</li>
+			{{/each}}
+		</ul>
+	{{else}}
+		{{#if projects.length}}
+			<ul class="flex flex-row flex-wrap gap-x-3">
+				{{#each projects}}
+					<div class="flex flex-col flex-wrap items-center text-light_nav_body_text_color bg-secondary_color py-[5rem] px-[5rem] m-[35px] rounded">
+						<h3>{{project_name}}</h3>
+						<p>{{project_sub_headline}}</p>
+						<a href="/projects/{{id}}"><button type="button" class="bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color">More</button></a>
+					</div>
+				{{/each}}
+			</ul>
+		{{else}}
+			<p>There are no projects at the moment.</p>
+		{{/if}}
+	{{/if}}
 
-    {{!-- PAGINATION CODE  --}}
-    <nav aria-label="Page navigation example">
-    <ul class="inline-flex -space-x-px">
-        <li>
-        <a href="#" class="py-2 px-3 ml-0 leading-tight text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Previous</a>
-        </li>
-        <li>
-        <a href="#" aria-current="page" class="py-2 px-3 text-primary_color bg-orange-100 border border-gray-300 hover:bg-orange-200 hover:text-primary_color dark:border-gray-700 dark:bg-gray-700 dark:text-white">1</a>
-        </li>
-        <li>
-        <a href="#" class="py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">2</a>
-        </li>
-        <li>
-        <a href="#" class="py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">3</a>
-        </li>
-        <li>
-        <a href="#" class="py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">4</a>
-        </li>
-        <li>
-        <a href="#" class="py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">5</a>
-        </li>
-        <li>
-        <a href="#" class="py-2 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Next</a>
-        </li>
-    </ul>
-    </nav>
-
-
+	{{!-- PAGINATION CODE  --}}
+	<nav aria-label="Page navigation example">
+		<ul class="inline-flex -space-x-px">
+			<li>
+				<a href="#" class="py-2 px-3 ml-0 leading-tight text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Previous</a>
+			</li>
+			<li>
+				<a href="#" aria-current="page" class="py-2 px-3 text-primary_color bg-orange-100 border border-gray-300 hover:bg-orange-200 hover:text-primary_color dark:border-gray-700 dark:bg-gray-700 dark:text-white">1</a>
+			</li>
+			<li>
+				<a href="#" class="py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">2</a>
+			</li>
+			<li>
+				<a href="#" class="py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">3</a>
+			</li>
+			<li>
+				<a href="#" class="py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">4</a>
+			</li>
+			<li>
+				<a href="#" class="py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">5</a>
+			</li>
+			<li>
+				<a href="#" class="py-2 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Next</a>
+			</li>
+		</ul>
+	</nav>
 </div>
 

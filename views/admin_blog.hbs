@@ -1,36 +1,37 @@
+<!-- content -->
 <div class="mt-[35px]">
-    <h1 class="font-bold text-3xl">Blog posts</h1>
-    <h3 class="text-2xl whitespace-nowrap">Here you can add blog posts</h3>
+	<h1 class="font-bold text-3xl">Blog posts</h1>
+	<h3 class="text-2xl whitespace-nowrap">Here you can add blog posts</h3>
 
-    <div>
-        <ul class="flex flex-row gap-10 mt-[35px]">
-            <a href="/admin_blog"><li class="text-primary_color">Add</li></a>
-            <a href="/blog_edit"><li class="hover:text-hover_color">Edit</li></a>
-            <a href="/blog_remove"><li class="hover:text-hover_color">Remove</li></a>
-        </ul>
-    </div>
+	<div>
+		<ul class="flex flex-row gap-10 mt-[35px]">
+			<a href="/admin_blog"><li class="text-primary_color">Add</li></a>
+			<a href="/blog_edit"><li class="hover:text-hover_color">Edit</li></a>
+			<a href="/blog_remove"><li class="hover:text-hover_color">Remove</li></a>
+		</ul>
+	</div>
 
-    <form action="/blogs/add" method="post" class="mt-[35px] bg-gray-100 p-4 space-y-4">
-        <div class="flex flex-row gap-4 whitespace-nowrap">
-            <label for="project_id">Project id: </label>
-            <input type="number" name="projectid" id="project_id">
-        </div>
+	<form action="/blogs/add" method="post" class="mt-[35px] bg-gray-100 p-4 space-y-4">
+		<div class="flex flex-row gap-4 whitespace-nowrap">
+			<label for="project_id">Project id: </label>
+			<input type="number" name="projectid" id="project_id">
+		</div>
 
-        <div class="flex flex-row gap-4 whitespace-nowrap">
-            <label for="post_title">Post title: </label>
-            <input type="text" name="post_title" id="post_title">
-        </div>
+		<div class="flex flex-row gap-4 whitespace-nowrap">
+			<label for="post_title">Post title: </label>
+			<input type="text" name="post_title" id="post_title">
+		</div>
 
-        <div class="flex flex-row gap-4 whitespace-nowrap">
-            <label for="post_text">Post text: </label>
-            <textarea id="post_text" name="post_text" class="form-textarea mt-1 block w-full" rows="3" placeholder="Enter post text"></textarea>
-        </div>
+		<div class="flex flex-row gap-4 whitespace-nowrap">
+			<label for="post_text">Post text: </label>
+			<textarea id="post_text" name="post_text" class="form-textarea mt-1 block w-full" rows="3" placeholder="Enter post text"></textarea>
+		</div>
 
-        <div class="flex flex-row gap-4 whitespace-nowrap">
-            <label for="post_date">Post date: </label>
-            <input type="date" name="post_date" id="post_date">
-        </div>
+		<div class="flex flex-row gap-4 whitespace-nowrap">
+			<label for="post_date">Post date: </label>
+			<input type="date" name="post_date" id="post_date">
+		</div>
 
-        <input type="submit" value="Add post" class="bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color" name="add_post" id="add_post">
-    </form>
+		<input type="submit" value="Add post" class="bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color" name="add_post" id="add_post">
+	</form>
 </div>

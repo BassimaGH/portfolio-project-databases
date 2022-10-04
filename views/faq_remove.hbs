@@ -1,40 +1,41 @@
+<!-- content -->
 <div class="mt-[35px]">
-    <h1 class="font-bold text-3xl">FAQ posts</h1>
-    <h3 class="text-2xl whitespace-nowrap">Here you can remove FAQ posts</h3>
+	<h1 class="font-bold text-3xl">FAQ posts</h1>
+	<h3 class="text-2xl whitespace-nowrap">Here you can remove FAQ posts</h3>
 
-    <div>
-        <ul class="flex flex-row gap-4 mt-[35px]">
-            <a href="/admin_faq"><li class="hover:text-hover_color">Add</li></a>
-            <a href="/faq_edit"><li class="hover:text-hover_color">Edit</li></a>
-            <a href="/faq_remove"><li class="text-primary_color">Remove</li></a>
-        </ul>
-    </div>
+	<div>
+		<ul class="flex flex-row gap-4 mt-[35px]">
+			<a href="/admin_faq"><li class="hover:text-hover_color">Add</li></a>
+			<a href="/faq_edit"><li class="hover:text-hover_color">Edit</li></a>
+			<a href="/faq_remove"><li class="text-primary_color">Remove</li></a>
+		</ul>
+	</div>
 
-        <table class="table-fixed mt-[15px]">
-        <thead class="bg-gray-50 p-4">
-            <tr>
-                <th scope="col" class="py-3 px-6">Post Question</th>
-                <th scope="col" class="py-3 px-6">Post Answer</th>
-                <th scope="col" class="py-3 px-6">Date</th>
-                <th scope="col" class="py-3 px-6">Project Number</th>
-            </tr>
-        </thead>
-        <tbody class="bg-gray-100 space-y-4 p-4">
-            {{#if faqs.length}}
-                {{#each faqs}}
-                    <tr>
-                        <form action="/faqs/remove/{{id}}" class="mt-[35px] space-y-4" method="post">
-                        <td class="py-3 px-6">{{post_question}}</td>
-                        <td class="py-3 px-6">{{post_answer}}</td>
-                        <td class="py-3 px-6">{{post_date}}</td>
-                        <td class="py-3 px-6">{{projectid}}</td>
-                        <td><input type="submit" value="Remove" class="bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color" name="add_post" id="add_post"></td>
-                        </form>
-                    </tr>
-                {{/each}}
-                {{else}}
-                    <p>There are no projects at the moment.</p>
-            {{/if}}
-        </tbody>
-    </table>
+	<table class="table-fixed mt-[15px]">
+		<thead class="bg-gray-50 p-4">
+			<tr>
+				<th scope="col" class="py-3 px-6">Post Question</th>
+				<th scope="col" class="py-3 px-6">Post Answer</th>
+				<th scope="col" class="py-3 px-6">Date</th>
+				<th scope="col" class="py-3 px-6">Project Number</th>
+			</tr>
+		</thead>
+		<tbody class="bg-gray-100 space-y-4 p-4">
+			{{#if faqs.length}}
+				{{#each faqs}}
+					<tr>
+						<form action="/faqs/remove/{{id}}" class="mt-[35px] space-y-4" method="post">
+							<td class="py-3 px-6">{{post_question}}</td>
+							<td class="py-3 px-6">{{post_answer}}</td>
+							<td class="py-3 px-6">{{post_date}}</td>
+							<td class="py-3 px-6">{{projectid}}</td>
+							<td><input type="submit" value="Remove" class="bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color" name="add_post" id="add_post"></td>
+						</form>
+					</tr>
+				{{/each}}
+			{{else}}
+				<p>There are no projects at the moment.</p>
+			{{/if}}
+		</tbody>
+	</table>
 </div>
