@@ -11,6 +11,17 @@
 		</ul>
 	</div>
 
+	{{#if error_messages.length}}
+		<div class="p-4 space-y-4 rounded mt-[35px] border-4 border-red-600">
+			<h3 class="font-bold mt-5">Couldn't remove the FAQ post because:</h3>
+			<ul class="mt-4 list-disc p-4">
+				{{#each error_messages}}
+					<li class="text-red-600 font-bold">{{this}}</li>
+				{{/each}}
+			</ul>
+		</div>
+	{{else}}
+
 	<table class="table-fixed mt-[15px]">
 		<thead class="bg-gray-50 p-4">
 			<tr>
@@ -39,4 +50,5 @@
 			{{/if}}
 		</tbody>
 	</table>
+	{{/if}}
 </div>

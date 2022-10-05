@@ -609,6 +609,11 @@ video {
   position: relative;
 }
 
+.inset-y-\[10px\] {
+  top: 10px;
+  bottom: 10px;
+}
+
 .inset-y-0 {
   top: 0px;
   bottom: 0px;

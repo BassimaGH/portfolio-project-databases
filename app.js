@@ -85,6 +85,15 @@ app.use(
 	})
 )
 
+// ADDS A MIDDLEWARE THAT CHECKS IF THE ADMIN IS LOGGED IN
+app.use(function(req, res, next){
+	const isLoggedIn = req.session.isLoggedIn
+
+	res.locals.isLoggedIn = isLoggedIn
+	
+	next()
+})
+
 // RENDERS THE PAGES (USER SIDE)
 
 // home page
@@ -268,26 +277,14 @@ app.post("/login", function (req, res){
 	}
 })
 
-app.post("/logout", function(req, res) {
-	const successfull_messages = []
-
+// LOGOUT GET REQUEST
+app.get("/logout", function (req, res){
 	req.session.isLoggedIn = false
-
-	if (isLoggedIn = false) {
-		successfull_messages.push("Successfully logged out!")
-		res.redirect("/")
-	}
-
-	if (successfull_messages.length) {
-		const model = {
-			successfull_messages,
-		}
-		res.render("/", model)
-	} 
+	res.redirect("/")
 })
 // RENDERS THE PAGES (ADMIN SIDE)
 
-// In the navigation bar
+// (In the navigation bar)
 
 // home page
 app.get("/dashboard", function(req, res){
@@ -306,6 +303,11 @@ app.post("/projects/add", function(req, res){
 	const project_description = req.body.project_description
 
 	const error_messages = []
+
+	// CONDITIONS AGAINST HACKERS
+	if(!req.session.isLoggedIn){
+		error_messages.push("You have to login!")
+	}
 
 	// CONDITIONS FOR THE PROJECT NAME
 	if (project_name == "") {
@@ -387,6 +389,12 @@ app.post("/blogs/add", function(req, res){
 
 	const error_messages = []
 
+	// CONDITIONS AGAINST HACKERS
+	if(!req.session.isLoggedIn){
+		error_messages.push("You have to login!")
+	}
+
+	// CONDITIONS FOR POST TITLE
 	if (post_title == "") {
 		error_messages.push("Post title should not be empty")
 	} else if (post_title.length > max_chara_20) {
@@ -395,6 +403,7 @@ app.post("/blogs/add", function(req, res){
 		error_messages.push("Post title should be more than " + min_chara_3 + " characters")
 	}
 
+	// CONDITIONS FOR POST TEXT
 	if (post_text == "") {
 		error_messages.push("Post text should not be empty")
 	} else if (post_text.length > max_chara_100) {
@@ -403,10 +412,12 @@ app.post("/blogs/add", function(req, res){
 		error_messages.push("Post text should be more than " + min_chara_20 + " characters")
 	}
 
+	// CONDITIONS FOR POST DATE
 	if (post_date == "") {
 		error_messages.push("Post date should not be empty")
 	}
 
+	// CONDITIONS FOR PROJECT ID
 	if (projectid == "") {
 		error_messages.push("Project id should not be empty")
 	} else if (projectid < min_project_id_number) {
@@ -469,6 +480,12 @@ app.post("/faqs/add", function(req, res){
 
 	const error_messages = []
 
+	// CONDITIONS AGAINST HACKERS
+	if(!req.session.isLoggedIn){
+		error_messages.push("You have to login!")
+	}
+
+	// CONDITIONS FOR THE POST QUESTION
 	if (post_question == "") {
 		error_messages.push("Post question should not be empty")
 	} else if (post_question.length > max_chara_20) {
@@ -477,6 +494,7 @@ app.post("/faqs/add", function(req, res){
 		error_messages.push("Post question should be more than " + min_chara_3 + " characters")
 	}
 
+	// CONDITIONS FOR THE POST ANSWER
 	if (post_answer == "") {
 		error_messages.push("Post answer should not be empty")
 	} else if (post_answer.length > max_chara_100) {
@@ -485,10 +503,12 @@ app.post("/faqs/add", function(req, res){
 		error_messages.push("Post answer should be more than " + min_chara_20 + " characters")
 	}
 
+	// CONDITIONS FOR THE POST DATE
 	if (post_date == "") {
 		error_messages.push("Post date should not be empty")
 	}
 
+	// CONDITIONS FOR THE PROJECT ID
 	if (projectid == "") {
 		error_messages.push("Project id should not be empty")
 	} else if (projectid < min_project_id_number) {
@@ -538,14 +558,21 @@ app.post("/faqs/add", function(req, res){
 
 //INSIDE THE MAIN PAGES
 
-//projects (edit, remove)
+//projects (edit, remove, search)
 app.get("/projects_edit", function(req, res){
 
 	const query = `SELECT * FROM projects`
 
 	db.all(query, function(error, projects) {
+		const error_messages = []
+
+		if (error){
+			error_messages.push("Internal server error!")
+		}
+
 		const model = {
-			projects ,
+			projects,
+			error_messages,
 			layout: "admin.hbs"
 		}
 
@@ -561,6 +588,11 @@ app.post("/projects/edit/:id", function(req, res){
 	const project_description = req.body.project_description
 
 	const error_messages = []
+
+	// CONDITIONS AGAINST HACKERS
+	if(!req.session.isLoggedIn){
+		error_messages.push("You have to login!")
+	}
 
 	// CONDITIONS FOR THE PROJECT NAME
 	if (project_name == "") {
@@ -630,18 +662,22 @@ app.post("/projects/edit/:id", function(req, res){
 
 		res.render("projects_edit.hbs", model)
 	}
-	
 
-
-	
 })
 
 app.get("/projects_remove", function(req, res){
 	const query = `SELECT * FROM projects`
 
 	db.all(query, function(error, projects) {
+		const error_messages = []
+
+		if (error){
+			error_messages.push("Internal server error!")
+		}
+
 		const model = {
-			projects ,
+			projects,
+			error_messages,
 			layout: "admin.hbs"
 		}
 
@@ -652,22 +688,100 @@ app.get("/projects_remove", function(req, res){
 app.post("/projects/remove/:id", function(req, res){
 	const id = req.params.id
 
-	const errorMessage = []
+	const error_messages = []
 
-	const query = `
-	DELETE FROM projects WHERE id = ?
-	`
+	// CONDITIONS AGAINST HACKERS
+	if(!req.session.isLoggedIn){
+		error_messages.push("You have to login!")
+	}
 
-	const values = [id]
+	if (error_messages.length == 0) {
 
-	db.run(query, values, function(error) {
-		if(error) {
-			res.redirect("/dashboard")
-		} else {
-			res.redirect("/admin_projects")
+		const query = `
+			DELETE FROM projects WHERE id = ?
+		`
+	
+		const values = [id]
+	
+		db.run(query, values, function(error) {
+			if(error) {
+				error_messages.push("Internal server error!")
+
+				const model = {
+					id,
+					error_messages,
+					layout: "admin.hbs"
+				}
+
+				res.render("projects_remove.hbs", model)
+			} else {
+				res.redirect("/projects_remove")
+			}
+	
+		})
+	} else{
+		const model = {
+			id,
+			error_messages,
+			layout: "admin.hbs"
 		}
 
-	})
+		res.render("projects_remove.hbs", model)
+	}
+
+})
+
+app.post("/projects_edit_search", function(req, res){
+	const searched_value = req.body.project_table_search
+	const project_name = req.body.project_name
+	const project_sub_headline = req.body.project_sub_headline
+	const project_description = req.body.project_description
+
+	const error_messages = []
+
+	// CONDITIONS AGAINST HACKERS
+	if(!req.session.isLoggedIn){
+		error_messages.push("You have to login!")
+	}
+
+	if (error_messages.length == 0) {
+		// THIS QUERY INSERTS VALUES FETCHED FROM THE WEB APPLICATION INTO THE SPECIFIED TABLE
+		const query = `
+		SELECT * FROM projects WHERE (project_name, project_sub_headline project_description) LIKE '%searched_value%'
+		`
+		const values = [project_name, project_sub_headline, project_description, searched_value]
+
+		db.run(query, values, function(error){
+			if (error){
+				error_messages.push("Internal server error (related to the search function)!")
+
+				const model = {
+					project_name,
+					project_sub_headline,
+					project_description,
+					searched_value,
+					error_messages,
+					layout: "admin.hbs"
+				}
+
+				res.render("projects_edit.hbs", model)
+			} else{
+				res.redirect("/projects_edit")
+			}
+		})
+	} else{
+		const model = {
+			project_name,
+			project_sub_headline,
+			project_description,
+			searched_value,
+			error_messages,
+			layout: "admin.hbs"
+		}
+
+		res.render("projects_edit.hbs", model)
+	}
+
 })
 
 //blog (edit, remove)
@@ -676,8 +790,15 @@ app.get("/blog_edit", function(req, res){
 	const query = `SELECT * FROM blogs`
 
 	db.all(query, function(error, blogs) {
+		const error_messages = []
+
+		if (error){
+			error_messages.push("Internal server error!")
+		}
+
 		const model = {
 			blogs,
+			error_messages,
 			layout: "admin.hbs"
 		}
 
@@ -692,30 +813,101 @@ app.post("/blogs/edit/:id", function(req, res){
 	const post_date = req.body.post_date
 	const projectid = req.body.projectid
 
-	const errorMessage = []
+	const error_messages = []
 
-	const query = `
-	UPDATE blogs SET post_title = ?, post_text = ?, post_date = ?, projectid = ? WHERE id = ?
-	`
+	// CONDITIONS AGAINST HACKERS
+	if(!req.session.isLoggedIn){
+		error_messages.push("You have to login!")
+	}
 
-	const values = [post_title, post_text, post_date, projectid, id]
+	// CONDITIONS FOR POST TITLE
+	if (post_title == "") {
+		error_messages.push("Post title should not be empty")
+	} else if (post_title.length > max_chara_20) {
+		error_messages.push("Post title should be less than " + max_chara_20 + " characters")
+	} else if (post_title.length < min_chara_3) {
+		error_messages.push("Post title should be more than " + min_chara_3 + " characters")
+	}
 
-	db.run(query, values, function(error) {
-		if(error) {
-			res.redirect("/dashboard")
-		} else {
-			res.redirect("/admin_blog")
+	// CONDITIONS FOR POST TEXT
+	if (post_text == "") {
+		error_messages.push("Post text should not be empty")
+	} else if (post_text.length > max_chara_100) {
+		error_messages.push("Post text should be less than " + max_chara_100 + " characters")
+	} else if (post_text.length < min_chara_20) {
+		error_messages.push("Post text should be more than " + min_chara_20 + " characters")
+	}
+
+	// CONDITIONS FOR POST DATE
+	if (post_date == "") {
+		error_messages.push("Post date should not be empty")
+	}
+
+	// CONDITIONS FOR PROJECT ID
+	if (projectid == "") {
+		error_messages.push("Project id should not be empty")
+	} else if (projectid < min_project_id_number) {
+		error_messages.push("Project id should not be less than " + min_project_id_number)
+	}
+
+	if (error_messages.length == 0) {
+
+		const query = `
+			UPDATE blogs SET post_title = ?, post_text = ?, post_date = ?, projectid = ? WHERE id = ?
+		`
+
+		const values = [post_title, post_text, post_date, projectid, id]
+
+		db.run(query, values, function(error) {
+			if(error) {
+				error_messages.push("Internal server error!")
+
+				const model = {
+					id,
+					post_title,
+					post_text,
+					post_date,
+					projectid,
+					error_messages,
+					layout: "admin.hbs"
+				}
+
+				res.render("blog_edit.hbs", model)
+			} else {
+				res.redirect("/blog_edit")
+			}
+
+		})
+
+	} else{
+		const model = {
+			id,
+			post_title,
+			post_text,
+			post_date,
+			projectid,
+			error_messages,
+			layout: "admin.hbs"
 		}
 
-	})
+		res.render("blog_edit.hbs", model)
+	}
+
 })
 
 app.get("/blog_remove", function(req, res){
 	const query = `SELECT * FROM blogs`
 
 	db.all(query, function(error, blogs) {
+		const error_messages = []
+
+		if (error){
+			error_messages.push("Internal server error!")
+		}
+
 		const model = {
 			blogs,
+			error_messages,
 			layout: "admin.hbs"
 		}
 
@@ -726,22 +918,46 @@ app.get("/blog_remove", function(req, res){
 app.post("/blogs/remove/:id", function(req, res){
 	const id = req.params.id
 
-	const errorMessage = []
+	const error_messages = []
 
-	const query = `
-	DELETE FROM blogs WHERE id = ?
-	`
+	// CONDITIONS AGAINST HACKERS
+	if(!req.session.isLoggedIn){
+		error_messages.push("You have to login!")
+	}
 
-	const values = [id]
+	if (error_messages.length == 0) {
 
-	db.run(query, values, function(error) {
-		if(error) {
-			res.redirect("/dashboard")
-		} else {
-			res.redirect("/admin_blog")
+		const query = `
+			DELETE FROM blogs WHERE id = ?
+		`
+	
+		const values = [id]
+	
+		db.run(query, values, function(error) {
+			if(error) {
+				error_messages.push("Internal server error!")
+
+				const model = {
+					id,
+					error_messages,
+					layout: "admin.hbs"
+				}
+
+				res.render("blog_remove.hbs", model)
+			} else {
+				res.redirect("/blog_remove")
+			}
+	
+		})
+	} else{
+		const model = {
+			id,
+			error_messages,
+			layout: "admin.hbs"
 		}
 
-	})
+		res.render("blog_remove.hbs", model)
+	}
 })
 
 //faq (edit, remove)
@@ -750,8 +966,15 @@ app.get("/faq_edit", function(req, res){
 	const query = `SELECT * FROM faqs`
 
 	db.all(query, function(error, faqs) {
+		const error_messages = []
+
+		if (error){
+			error_messages.push("Internal server error!")
+		}
+
 		const model = {
 			faqs,
+			error_messages,
 			layout: "admin.hbs"
 		}
 
@@ -766,30 +989,99 @@ app.post("/faqs/edit/:id", function(req, res){
 	const post_date = req.body.post_date
 	const projectid = req.body.projectid
 
-	const errorMessage = []
+	const error_messages = []
 
-	const query = `
-	UPDATE faqs SET post_question = ?, post_answer = ?, post_date = ?, projectid = ? WHERE id = ?
-	`
+	// CONDITIONS AGAINST HACKERS
+	if(!req.session.isLoggedIn){
+		error_messages.push("You have to login!")
+	}
 
-	const values = [post_question, post_answer, post_date, projectid, id]
+	// CONDITIONS FOR THE POST QUESTION
+	if (post_question == "") {
+		error_messages.push("Post question should not be empty")
+	} else if (post_question.length > max_chara_20) {
+		error_messages.push("Post question should be less than " + max_chara_20 + " characters")
+	} else if (post_question.length < min_chara_3) {
+		error_messages.push("Post question should be more than " + min_chara_3 + " characters")
+	}
 
-	db.run(query, values, function(error) {
-		if(error) {
-			res.redirect("/dashboard")
-		} else {
-			res.redirect("/admin_faq")
+	// CONDITIONS FOR THE POST ANSWER
+	if (post_answer == "") {
+		error_messages.push("Post answer should not be empty")
+	} else if (post_answer.length > max_chara_100) {
+		error_messages.push("Post answer should be less than " + max_chara_100 + " characters")
+	} else if (post_answer.length < min_chara_20) {
+		error_messages.push("Post answer should be more than " + min_chara_20 + " characters")
+	}
+
+	// CONDITIONS FOR THE POST DATE
+	if (post_date == "") {
+		error_messages.push("Post date should not be empty")
+	}
+
+	// CONDITIONS FOR THE PROJECT ID
+	if (projectid == "") {
+		error_messages.push("Project id should not be empty")
+	} else if (projectid < min_project_id_number) {
+		error_messages.push("Project id should not be less than " + min_project_id_number)
+	}
+
+	if (error_messages.length == 0) {
+		const query = `
+			UPDATE faqs SET post_question = ?, post_answer = ?, post_date = ?, projectid = ? WHERE id = ?
+		`
+	
+		const values = [post_question, post_answer, post_date, projectid, id]
+	
+		db.run(query, values, function(error) {
+			if(error) {
+				error_messages.push("Internal server error!")
+
+				const model = {
+					id,
+					post_question,
+					post_answer,
+					post_date,
+					projectid,
+					error_messages,
+					layout: "admin.hbs"
+				}
+
+				res.render("faq_edit.hbs", model)
+			} else {
+				res.redirect("/faq_edit")
+			}
+	
+		})
+
+	} else{
+		const model = {
+			id,
+			post_question,
+			post_answer,
+			post_date,
+			projectid,
+			error_messages,
+			layout: "admin.hbs"
 		}
 
-	})
+		res.render("faq_edit.hbs", model)
+	}
 })
 
 app.get("/faq_remove", function(req, res){
 	const query = `SELECT * FROM faqs`
 
 	db.all(query, function(error, faqs) {
+		const error_messages = []
+
+		if (error){
+			error_messages.push("Internal server error!")
+		}
+
 		const model = {
 			faqs,
+			error_messages,
 			layout: "admin.hbs"
 		}
 
@@ -800,22 +1092,46 @@ app.get("/faq_remove", function(req, res){
 app.post("/faqs/remove/:id", function(req, res){
 	const id = req.params.id
 
-	const errorMessage = []
+	const error_messages = []
 
-	const query = `
-	DELETE FROM faqs WHERE id = ?
-	`
+	// CONDITIONS AGAINST HACKERS
+	if(!req.session.isLoggedIn){
+		error_messages.push("You have to login!")
+	}
 
-	const values = [id]
+	if (error_messages.length == 0) {
 
-	db.run(query, values, function(error) {
-		if(error) {
-			res.redirect("/dashboard")
-		} else {
-			res.redirect("/admin_faq")
+		const query = `
+			DELETE FROM faqs WHERE id = ?
+		`
+	
+		const values = [id]
+	
+		db.run(query, values, function(error) {
+			if(error) {
+				error_messages.push("Internal server error!")
+
+				const model = {
+					id,
+					error_messages,
+					layout: "admin.hbs"
+				}
+
+				res.render("faq_remove.hbs", model)
+			} else {
+				res.redirect("/faq_remove")
+			}
+	
+		})
+	} else{
+		const model = {
+			id,
+			error_messages,
+			layout: "admin.hbs"
 		}
 
-	})
+		res.render("faq_remove.hbs", model)
+	}
 })
 
 
