@@ -4,6 +4,7 @@ const expressHandlebars = require("express-handlebars")
 const sqlite3 = require("sqlite3")
 const expressSession = require("express-session")
 const like = require("like")
+const multer  = require('multer')
 
 // APP GLOBAL VARIABLES VALUES
 // text and numbers character limits
@@ -23,6 +24,8 @@ const admin_password = "2003"
 
 // DATABASE NAME
 const db = new sqlite3.Database("portfolio_database.db")
+
+db.run(`PRAGMA foreign_keys = ON`)
 
 // PROJECTS TABLE
 // (RUNS THE SQL QUERY AND RETURNS A DATABASE OBJECT)
@@ -52,6 +55,16 @@ db.run(`
 		post_question TEXT,
 		post_answer TEXT,
 		post_date TEXT,
+		projectid INTEGER,
+		FOREIGN KEY (projectid) REFERENCES projects (id) ON DELETE CASCADE
+	)`
+)
+// PICTURES TABLE
+db.run(`
+	CREATE TABLE IF NOT EXISTS pictures (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		picture_title TEXT,
+		picture_name TEXT,
 		projectid INTEGER,
 		FOREIGN KEY (projectid) REFERENCES projects (id) ON DELETE CASCADE
 	)`
@@ -252,6 +265,48 @@ app.get("/projects/:id/project_faq", function(req, res){
 	})
 	
 })
+
+app.get("/projects/:id/project_picture", function(req, res){
+	// REQUESTS THE ID FROM AN OBJECT CONTAINING PROPERTIES MAPPED TO THE NAMED ROUTE “parameters” (GETS THE ID VALUE FROM A URL LIKE "/projects/:id")
+	const id = req.params.id
+	// THIS QUERY SELECTS FROM A CERTAIN TABLE WHERE THE ID IS EQUAL TO THE ID REQUESTED
+	const query = `SELECT * FROM projects WHERE id = ? `
+	// STORE THE VALUE FROM THAT OBJECT TO AN ARRAY
+	const values = [id]
+
+	db.get(query, values, function(error, project) {
+		// REQUESTS THE ID FROM AN OBJECT CONTAINING PROPERTIES MAPPED TO THE NAMED ROUTE “parameters” (GETS THE ID VALUE FROM A URL LIKE "/projects/:id")
+		const id = req.params.id
+		// THIS QUERY SELECTS FROM A CERTAIN TABLE WHERE THE ID IS EQUAL TO THE ID REQUESTED
+		const query = `SELECT * FROM pictures WHERE projectid = ? `
+		// STORE THE VALUE FROM THAT OBJECT TO AN ARRAY
+		const values = [id]
+
+		const error_messages = []
+
+		if (error){
+			error_messages.push("Internal server error!")
+		}
+
+		// (RUNS THE SQL QUERY AND RETURNS ALL DATABASE OBJECT RESULT ROWA) 
+		db.all(query, values, function(error, pictures) {
+
+			if (error){
+				error_messages.push("Internal server error!")
+			}
+
+			const model = {
+				project,
+				pictures,
+				error_messages
+			}
+
+			res.render("project_picture.hbs", model)
+
+		})
+	})
+	
+})
 // login page (only the admin can enter the correct values)
 app.get("/login", function(req, res){
 	res.render("login.hbs")
@@ -434,6 +489,7 @@ app.post("/blogs/add", function(req, res){
 
 		db.run(query, values, function(error){
 			if (error){
+				console.log(error)
 				error_messages.push("Internal server error!")
 
 				const model = {
@@ -556,6 +612,10 @@ app.post("/faqs/add", function(req, res){
 	
 })
 
+// pictures add page
+app.get("/admin_pictures", function(req, res){
+	res.render("admin_pictures.hbs", {layout: "admin.hbs"})
+})
 
 //INSIDE THE MAIN PAGES
 
@@ -590,6 +650,7 @@ app.get("/projects_edit", function(req, res){
 
 app.post("/projects/edit/:id", function(req, res){
 	const id = req.params.id
+	const editable_project_id = req.body.editable_project_id
 	const project_name = req.body.project_name
 	const project_sub_headline = req.body.project_sub_headline
 	const project_description = req.body.project_description
@@ -632,10 +693,10 @@ app.post("/projects/edit/:id", function(req, res){
 	if (error_messages.length == 0) {
 
 		const query = `
-			UPDATE projects SET project_name = ?, project_sub_headline = ?, project_description = ? WHERE id = ?
+			UPDATE projects SET project_name = ?, project_sub_headline = ?, project_description = ?, id = ? WHERE id = ?
 		`
 
-		const values = [project_name, project_sub_headline, project_description, id]
+		const values = [project_name, project_sub_headline, project_description, editable_project_id, id]
 
 		db.run(query, values, function(error) {
 			if(error) {
@@ -646,6 +707,7 @@ app.post("/projects/edit/:id", function(req, res){
 					project_name,
 					project_sub_headline,
 					project_description,
+					editable_project_id,
 					error_messages,
 					layout: "admin.hbs"
 				}
@@ -663,6 +725,7 @@ app.post("/projects/edit/:id", function(req, res){
 			project_name,
 			project_sub_headline,
 			project_description,
+			editable_project_id,
 			error_messages,
 			layout: "admin.hbs"
 		}
@@ -756,9 +819,9 @@ app.get("/projects_edit_search", function(req, res){
 	if (search_error_messages.length == 0 && searched_value) {
 		// THIS QUERY INSERTS VALUES FETCHED FROM THE WEB APPLICATION INTO THE SPECIFIED TABLE
 		const query = `
-		SELECT * FROM projects WHERE project_name LIKE ? OR project_sub_headline LIKE ? OR project_description LIKE ?
+		SELECT * FROM projects WHERE id LIKE ? OR project_name LIKE ? OR project_sub_headline LIKE ? OR project_description LIKE ?
 		`
-		const values = ["%" + searched_value + "%", "%" + searched_value + "%", "%" + searched_value + "%"]
+		const values = ["%" + searched_value + "%", "%" + searched_value + "%", "%" + searched_value + "%", "%" + searched_value + "%"]
 
 		db.all(query, values, function(error, projects){
 			if (error){
@@ -773,7 +836,7 @@ app.get("/projects_edit_search", function(req, res){
 
 				res.render("projects_edit.hbs", model)
 			} else{
-				console.log(searched_value)
+
 				const model = {
 					searched_value,
 					search_error_messages,
@@ -971,6 +1034,59 @@ app.post("/blogs/remove/:id", function(req, res){
 		res.render("blog_remove.hbs", model)
 	}
 })
+// BLOGS TABLE EDIT SEARCH FUNCTION
+app.get("/blog_edit_search", function(req, res){
+	const searched_value = req.query.blog_table_search
+
+	const search_error_messages = []
+
+	// CONDITIONS AGAINST HACKERS
+	if(!req.session.isLoggedIn){
+		search_error_messages.push("You have to login!")
+	}
+
+	if (search_error_messages.length == 0 && searched_value) {
+		// THIS QUERY INSERTS VALUES FETCHED FROM THE WEB APPLICATION INTO THE SPECIFIED TABLE
+		const query = `
+		SELECT * FROM blogs WHERE post_title LIKE ? OR post_text LIKE ? OR post_date LIKE ? OR projectid LIKE ?
+		`
+		const values = ["%" + searched_value + "%", "%" + searched_value + "%", "%" + searched_value + "%", "%" + searched_value + "%"]
+
+		db.all(query, values, function(error, blogs){
+			if (error){
+				search_error_messages.push("Internal server error (related to the search function)!")
+
+				const model = {
+					searched_value,
+					search_error_messages,
+					blogs,
+					layout: "admin.hbs"
+				}
+
+				res.render("blog_edit.hbs", model)
+			} else{
+
+				const model = {
+					searched_value,
+					search_error_messages,
+					blogs,
+					layout: "admin.hbs"
+				}
+				res.render("blog_edit.hbs", model)
+			}
+		})
+	} else{
+		const model = {
+			searched_value,
+			search_error_messages,
+			blogs,
+			layout: "admin.hbs"
+		}
+
+		res.render("blog_edit.hbs", model)
+	}
+
+})
 
 //faq (edit, remove)
 app.get("/faq_edit", function(req, res){
@@ -1145,6 +1261,100 @@ app.post("/faqs/remove/:id", function(req, res){
 		res.render("faq_remove.hbs", model)
 	}
 })
+// FAQ TABLE EDIT SEARCH FUNCTION
+app.get("/faq_edit_search", function(req, res){
+	const searched_value = req.query.faq_table_search
 
+	const search_error_messages = []
+
+	// CONDITIONS AGAINST HACKERS
+	if(!req.session.isLoggedIn){
+		search_error_messages.push("You have to login!")
+	}
+
+	if (search_error_messages.length == 0 && searched_value) {
+		// THIS QUERY INSERTS VALUES FETCHED FROM THE WEB APPLICATION INTO THE SPECIFIED TABLE
+		const query = `
+		SELECT * FROM faqs WHERE post_question LIKE ? OR post_answer LIKE ? OR post_date LIKE ? OR projectid LIKE ?
+		`
+		const values = ["%" + searched_value + "%", "%" + searched_value + "%", "%" + searched_value + "%", "%" + searched_value + "%"]
+
+		db.all(query, values, function(error, faqs){
+			if (error){
+				search_error_messages.push("Internal server error (related to the search function)!")
+
+				const model = {
+					searched_value,
+					search_error_messages,
+					faqs,
+					layout: "admin.hbs"
+				}
+
+				res.render("faq_edit.hbs", model)
+			} else{
+
+				const model = {
+					searched_value,
+					search_error_messages,
+					faqs,
+					layout: "admin.hbs"
+				}
+				res.render("faq_edit.hbs", model)
+			}
+		})
+	} else{
+		const model = {
+			searched_value,
+			search_error_messages,
+			faqs,
+			layout: "admin.hbs"
+		}
+
+		res.render("faq_edit.hbs", model)
+	}
+
+})
+
+//pictures (edit, remove)
+app.get("/picture_edit", function(req, res){
+	
+	const query = `SELECT * FROM pictures`
+
+	db.all(query, function(error, blogs) {
+		const error_messages = []
+
+		if (error){
+			error_messages.push("Internal server error!")
+		}
+
+		const model = {
+			blogs,
+			error_messages,
+			layout: "admin.hbs"
+		}
+
+		res.render("picture_edit.hbs", model)
+	}) 
+})
+
+app.get("/picture_remove", function(req, res){
+	const query = `SELECT * FROM pictures`
+
+	db.all(query, function(error, faqs) {
+		const error_messages = []
+
+		if (error){
+			error_messages.push("Internal server error!")
+		}
+
+		const model = {
+			faqs,
+			error_messages,
+			layout: "admin.hbs"
+		}
+
+		res.render("picture_remove.hbs", model)
+	}) 
+})
 
 app.listen(8080)

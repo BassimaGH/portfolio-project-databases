@@ -12,7 +12,7 @@
 	</div>
 
 	{{!-- copied code from https://flowbite.com/docs/components/tables/ --}}
-	<div class="pt-4 dark:bg-gray-900">
+	<div class="pt-4 dark:bg-gray-900 flex flex-row gap-x-3">
 		<form action="/projects_edit_search" method="get" class="flex flex-row items-center gap-x-3">
 			<label for="project_table_search" class="sr-only">Search</label>
 			<div class="relative mt-1">
@@ -25,7 +25,7 @@
 			</div>
 			<input type="submit" value="Search" class="mt-[35px] mb-[35px] bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color" name="search_projects" id="search_projects">
 		</form>
-		<a href="/projects_edit"><button type="button" class="mt-[35px] mb-[35px] bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color">Reset search</button></a>
+		<a href="/projects_edit"><button type="button" class="mt-[35px] mb-[35px] bg-secondary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-gray-900">Reset search</button></a>
 	</div>
 
 	{{#if access_error_messages.length}}
@@ -64,6 +64,7 @@
 	<table class="table-fixed mt-[15px] mb-[4vw]">
 		<thead class="bg-gray-50 p-4">
 			<tr>
+				<th scope="col" class="py-3 pl-[2vw] text-start border-4 border-x-gray-300">Id</th>
 				<th scope="col" class="py-3 pl-[2vw] text-start border-4 border-x-gray-300">Name</th>
 				<th scope="col" class="py-3 pl-[2vw] text-start border-4 border-r-gray-300">Sub-headline</th>
 				<th scope="col" class="py-3 pl-[2vw] text-start border-4 border-r-gray-300">Description</th>
@@ -75,6 +76,7 @@
 				{{#each projects}}
 					<tr>
 						<form action="/projects/edit/{{id}}" method="post">
+							<td class="hover:text-primary_color py-3 pr-[2vw] pl-[1vw] border-4 border-x-gray-300"><input type="text" name="editable_project_id" value="{{id}}" class="bg-gray-100 py-2 px-4"></td>
 							<td class="hover:text-primary_color py-3 pr-[2vw] pl-[1vw] border-4 border-x-gray-300"><input type="text" name="project_name" value="{{project_name}}" class="bg-gray-100 py-2 px-4"></td>
 							<td class="hover:text-primary_color py-3 pr-[2vw] pl-[1vw] border-4 border-r-gray-300"><input type="text" name="project_sub_headline" value="{{project_sub_headline}}" class="bg-gray-100 py-2 px-4"></td>
 							<td class="hover:text-primary_color py-3 pr-[2vw] pl-[1vw] border-4 border-r-gray-300"><input type="text" name="project_description" value="{{project_description}}" class="bg-gray-100 py-2 px-4"></td>

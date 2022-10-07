@@ -11,6 +11,23 @@
 		</ul>
 	</div>
 
+	{{!-- copied code from https://flowbite.com/docs/components/tables/ --}}
+	<div class="pt-4 dark:bg-gray-900 flex flex-row gap-x-3">
+		<form action="/faq_edit_search" method="get" class="flex flex-row items-center gap-x-3">
+			<label for="faq_table_search" class="sr-only">Search</label>
+			<div class="relative mt-1">
+				<div class="flex absolute inset-y-[10px] left-0 pl-3 pointer-events-none">
+					<svg class="w-5 h-5 text-gray-500 dark:text-gray-400" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+						<path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path>
+					</svg>
+				</div>
+				<input type="text" id="faq_table_search" name="faq_table_search" class="block p-2 pl-10 w-80 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search for items">
+			</div>
+			<input type="submit" value="Search" class="mt-[35px] mb-[35px] bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color" name="search_faq" id="search_faq">
+		</form>
+		<a href="/faq_edit"><button type="button" class="mt-[35px] mb-[35px] bg-secondary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-gray-900">Reset search</button></a>
+	</div>
+
 	{{#if error_messages.length}}
 		<div class="p-4 space-y-4 rounded mt-[35px] border-4 border-red-600">
 			<h3 class="font-bold mt-5">Couldn't edit the FAQ post because:</h3>

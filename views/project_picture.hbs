@@ -1,0 +1,42 @@
+<!-- content -->
+<div class="flex flex-col items-center h-screen mb-[20vw]">
+	<div class="flex container pl-[10vw] self-start justify-start mx-0">
+		<a href="/projects"><button type="button" class="bg-primary_color text-white mt-[35px] hover:bg-hover_color rounded-lg py-[1.2vw] px-[3.4vw]">Back</button></a>
+	</div>
+	
+	{{#if error_messages.length}}
+		<div class="p-4 space-y-4 rounded mt-[35px] border-4 border-red-600">
+			<h3 class="font-bold">Couldn't fetch the project pictures because:</h3>
+			<ul class="list-disc ml-4">
+				{{#each error_messages}}
+					<li class="text-red-600 mt-4 font-bold">{{this}}</li>
+				{{/each}}
+			</ul>
+		</div>
+	{{else}}
+		{{#if project}}
+			<div class="flex flex-col items-center text-light_nav_body_text_color mt-[35px] bg-secondary_color py-[6vw] px-[5vw] rounded">
+				<h1 class="text-3xl">{{project.project_name}}</h1>
+				<p>{{project.project_sub_headline}}</p>
+				<ul class="flex flex-row gap-10 mt-[35px] items-center">
+					<a href="/projects/{{project.id}}"><li class="hover:text-primary_color">Description</li></a>
+					<a href="/projects/{{project.id}}/project_picture"><li class="text-primary_color">Project pictures</li></a>
+					<a href="/projects/{{project.id}}/project_blog"><li class="hover:text-primary_color">Blog</li></a>
+					<a href="/projects/{{project.id}}/project_faq"><li class="hover:text-primary_color">FAQs</li></a>
+				</ul>
+				<ul class="mt-[35px] bg-darker_secondary_color rounded py-[5vw] px-[7vw]">
+					<h4 class="mb-8 text-3xl">Project Pictures</h4>
+					{{#each pictures}}
+					<li class="border-4 mb-[25px] self-start border-primary_color rounded pr-[9vw] pl-[1vw]">
+						<p class="text-1xl italic font-light">{{picture_title}}</p>
+						<p class="text-2xl">{{picture_name}}</p>
+					</li>
+					{{/each}}
+				</ul>
+
+			</div>
+		{{else}}
+			<p>There are no pictures at the moment.</p>
+		{{/if}}
+	{{/if}}
+</div>
