@@ -3,6 +3,7 @@ const express = require("express")
 const expressHandlebars = require("express-handlebars")
 const sqlite3 = require("sqlite3")
 const expressSession = require("express-session")
+const like = require("like")
 
 // APP GLOBAL VARIABLES VALUES
 // text and numbers character limits
@@ -27,7 +28,7 @@ const db = new sqlite3.Database("portfolio_database.db")
 // (RUNS THE SQL QUERY AND RETURNS A DATABASE OBJECT)
 db.run(`
 	CREATE TABLE IF NOT EXISTS projects (
-		id INTEGER PRIMARY KEY,
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		project_name TEXT,
 		project_sub_headline TEXT,
 		project_description TEXT
@@ -36,23 +37,23 @@ db.run(`
 // BLOG POSTS TABLE
 db.run(`
 	CREATE TABLE IF NOT EXISTS blogs (
-		id INTEGER PRIMARY KEY,
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		post_title TEXT,
 		post_text TEXT,
 		post_date TEXT,
 		projectid INTEGER,
-		FOREIGN KEY (projectid) REFERENCES projects (id)
+		FOREIGN KEY (projectid) REFERENCES projects (id) ON DELETE CASCADE
 	)`
 )
 // FAQS TABLE
 db.run(`
 	CREATE TABLE IF NOT EXISTS faqs (
-		id INTEGER PRIMARY KEY,
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		post_question TEXT,
 		post_answer TEXT,
 		post_date TEXT,
 		projectid INTEGER,
-		FOREIGN KEY (projectid) REFERENCES projects (id)
+		FOREIGN KEY (projectid) REFERENCES projects (id) ON DELETE CASCADE
 	)`
 )
 
@@ -81,7 +82,7 @@ app.use(
 	expressSession({
 		saveUninitialized: false,
 		resave: false,
-		secret: "bassima2003"
+		secret: "hgkhkhgkshgkhkgjhlsj"
 	})
 )
 
@@ -564,15 +565,21 @@ app.get("/projects_edit", function(req, res){
 	const query = `SELECT * FROM projects`
 
 	db.all(query, function(error, projects) {
-		const error_messages = []
+
+		const access_error_messages = []
+
+		// CONDITIONS AGAINST HACKERS
+		if(!req.session.isLoggedIn){
+			access_error_messages.push("You have to login!")
+		}
 
 		if (error){
-			error_messages.push("Internal server error!")
+			access_error_messages.push("Internal server error!")
 		}
 
 		const model = {
 			projects,
-			error_messages,
+			access_error_messages,
 			layout: "admin.hbs"
 		}
 
@@ -669,15 +676,20 @@ app.get("/projects_remove", function(req, res){
 	const query = `SELECT * FROM projects`
 
 	db.all(query, function(error, projects) {
-		const error_messages = []
+		const access_error_messages = []
+
+		// CONDITIONS AGAINST HACKERS
+		if(!req.session.isLoggedIn){
+			access_error_messages.push("You have to login!")
+		}
 
 		if (error){
-			error_messages.push("Internal server error!")
+			access_error_messages.push("Internal server error!")
 		}
 
 		const model = {
 			projects,
-			error_messages,
+			access_error_messages,
 			layout: "admin.hbs"
 		}
 
@@ -730,52 +742,52 @@ app.post("/projects/remove/:id", function(req, res){
 	}
 
 })
+// PROJECTS TABLE SEARCH FUNCTION
+app.get("/projects_edit_search", function(req, res){
+	const searched_value = req.query.project_table_search
 
-app.post("/projects_edit_search", function(req, res){
-	const searched_value = req.body.project_table_search
-	const project_name = req.body.project_name
-	const project_sub_headline = req.body.project_sub_headline
-	const project_description = req.body.project_description
-
-	const error_messages = []
+	const search_error_messages = []
 
 	// CONDITIONS AGAINST HACKERS
 	if(!req.session.isLoggedIn){
-		error_messages.push("You have to login!")
+		search_error_messages.push("You have to login!")
 	}
 
-	if (error_messages.length == 0) {
+	if (search_error_messages.length == 0 && searched_value) {
 		// THIS QUERY INSERTS VALUES FETCHED FROM THE WEB APPLICATION INTO THE SPECIFIED TABLE
 		const query = `
-		SELECT * FROM projects WHERE (project_name, project_sub_headline project_description) LIKE '%searched_value%'
+		SELECT * FROM projects WHERE project_name LIKE ? OR project_sub_headline LIKE ? OR project_description LIKE ?
 		`
-		const values = [project_name, project_sub_headline, project_description, searched_value]
+		const values = ["%" + searched_value + "%", "%" + searched_value + "%", "%" + searched_value + "%"]
 
-		db.run(query, values, function(error){
+		db.all(query, values, function(error, projects){
 			if (error){
-				error_messages.push("Internal server error (related to the search function)!")
+				search_error_messages.push("Internal server error (related to the search function)!")
 
 				const model = {
-					project_name,
-					project_sub_headline,
-					project_description,
 					searched_value,
-					error_messages,
+					search_error_messages,
+					projects,
 					layout: "admin.hbs"
 				}
 
 				res.render("projects_edit.hbs", model)
 			} else{
-				res.redirect("/projects_edit")
+				console.log(searched_value)
+				const model = {
+					searched_value,
+					search_error_messages,
+					projects,
+					layout: "admin.hbs"
+				}
+				res.render("projects_edit.hbs", model)
 			}
 		})
 	} else{
 		const model = {
-			project_name,
-			project_sub_headline,
-			project_description,
 			searched_value,
-			error_messages,
+			search_error_messages,
+			projects,
 			layout: "admin.hbs"
 		}
 

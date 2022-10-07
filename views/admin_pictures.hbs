@@ -1,0 +1,32 @@
+<!-- content -->
+<div class="mt-[35px]">
+	<h1 class="font-bold text-3xl">Pictures</h1>
+	<h3 class="text-2xl whitespace-nowrap">Here you can add Pictures</h3>
+
+	<div>
+		<ul class="flex flex-row gap-10 mt-[35px]">
+			<a href="/admin_pictures"><li class="text-primary_color">Add</li></a>
+			<a href="/pictures_edit"><li class="hover:text-hover_color">Edit</li></a>
+			<a href="/pictures_remove"><li class="hover:text-hover_color">Remove</li></a>
+		</ul>
+	</div>
+
+	<form action="/pictures/add" method="post" class="mt-[35px] mb-[35px] bg-gray-100 p-4 space-y-4">
+		<div class="flex flex-row gap-4 whitespace-nowrap">
+			<label for="projectid">Project id: </label>
+			<input name="projectid" type="number" id="projectid" value="{{projectid}}">
+		</div>
+
+		<div class="flex flex-row gap-4 whitespace-nowrap">
+			<label for="picture_title">Picture title: </label>
+			<input type="text" name="picture_title" id="picture_title" value="{{picture_title}}">
+		</div>
+
+		<div class="flex flex-row gap-4 whitespace-nowrap">
+			<label for="picture_name">Picture name</label>
+			<input type="file" name="picture_name" id="picture_name">
+		</div>
+
+		<input type="submit" value="Add picture" class="bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color" name="add_picture" id="add_picture">
+	</form>
+</div>
