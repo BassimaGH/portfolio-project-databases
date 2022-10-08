@@ -6,14 +6,14 @@
 	<div>
 		<ul class="flex flex-row gap-10 mt-[35px]">
 			<a href="/admin_pictures"><li class="hover:text-hover_color">Add</li></a>
-			<a href="/picture_edit"><li class="text-primary_color">Edit</li></a>
-			<a href="/picture_remove"><li class="hover:text-hover_color">Remove</li></a>
+			<a href="/picture_edit"><li class="hover:text-hover_color">Edit</li></a>
+			<a href="/picture_remove"><li class="text-primary_color">Remove</li></a>
 		</ul>
 	</div>
 
 	{{#if error_messages.length}}
 		<div class="p-4 space-y-4 rounded mt-[35px] border-4 border-red-600">
-			<h3 class="font-bold mt-5">Couldn't edit the project picture because:</h3>
+			<h3 class="font-bold mt-5">Couldn't remove the project picture because:</h3>
 			<ul class="mt-4 list-disc p-4">
 				{{#each error_messages}}
 					<li class="text-red-600 font-bold">{{this}}</li>
@@ -36,7 +36,7 @@
 			{{#if pictures.length}}
 				{{#each pictures}}
 					<tr>
-						<form action="/pictures/edit/{{id}}" method="post" class="mt-[35px] space-y-4">
+						<form action="/pictures/remove/{{id}}" method="post" class="mt-[35px] space-y-4">
 							<td class="hover:text-primary_color py-3 pr-[2vw] pl-[1vw] border-4 border-x-gray-300">{{picture_title}}</td>
 							<td class="hover:text-primary_color py-3 pr-[2vw] pl-[1vw] border-4 border-r-gray-300">{{picture_name}}</td>
 							<td class="hover:text-primary_color py-3 pr-[2vw] pl-[1vw] border-4 border-r-gray-300">{{projectid}}</td>

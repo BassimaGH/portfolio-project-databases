@@ -24,12 +24,7 @@
 
 		<div class="flex flex-row gap-4 whitespace-nowrap">
 			<label for="project_description">Project description: </label>
-			<textarea name="project_description" id="project_description" class="form-textarea mt-1 block w-full" rows="3" placeholder="Enter project description"></textarea>
-		</div>
-
-		<div class="flex flex-row gap-4 whitespace-nowrap">
-			<label for="project_pictures">Project pictures</label>
-			<input type="file" name="project_pictures" id="project_pictures">
+			<textarea name="project_description" id="project_description" class="form-textarea mt-1 block w-full" rows="3" placeholder="Enter project description">{{project_description}}</textarea>
 		</div>
 
 		<input type="submit" value="Add project" class="bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color" name="add_project" id="add_project">

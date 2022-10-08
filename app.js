@@ -6,6 +6,20 @@ const expressSession = require("express-session")
 const like = require("like")
 const multer  = require('multer')
 
+// MIDDLEWARE FOR PICTURES
+const storage = multer.diskStorage({
+	destination(req, file, cb) {
+		cb(null, './public/images')
+	},
+	filename(req, file, cb) {
+		console.log(file)
+		cb(null, file.originalname)
+	},
+})
+const upload = multer({
+	storage
+})
+
 // APP GLOBAL VARIABLES VALUES
 // text and numbers character limits
 const max_chara_20 = 20
@@ -182,6 +196,7 @@ app.get("/projects/:id", function(req, res){
 
 })
 
+// DISPLAYS A SINGLE PROJECT BLOG PAGE
 app.get("/projects/:id/project_blog", function(req, res){
 	// REQUESTS THE ID FROM AN OBJECT CONTAINING PROPERTIES MAPPED TO THE NAMED ROUTE “parameters” (GETS THE ID VALUE FROM A URL LIKE "/projects/:id")
 	const id = req.params.id
@@ -224,6 +239,7 @@ app.get("/projects/:id/project_blog", function(req, res){
 	
 })
 
+// DISPLAYS A SINGLE PROJECT FAQ PAGE
 app.get("/projects/:id/project_faq", function(req, res){
 	// REQUESTS THE ID FROM AN OBJECT CONTAINING PROPERTIES MAPPED TO THE NAMED ROUTE “parameters” (GETS THE ID VALUE FROM A URL LIKE "/projects/:id")
 	const id = req.params.id
@@ -266,6 +282,7 @@ app.get("/projects/:id/project_faq", function(req, res){
 	
 })
 
+// DISPLAYS A SINGLE PROJECT PICTURES PAGE
 app.get("/projects/:id/project_picture", function(req, res){
 	// REQUESTS THE ID FROM AN OBJECT CONTAINING PROPERTIES MAPPED TO THE NAMED ROUTE “parameters” (GETS THE ID VALUE FROM A URL LIKE "/projects/:id")
 	const id = req.params.id
@@ -307,7 +324,8 @@ app.get("/projects/:id/project_picture", function(req, res){
 	})
 	
 })
-// login page (only the admin can enter the correct values)
+
+// LOGIN PAGE (only the admin can enter the correct values)
 app.get("/login", function(req, res){
 	res.render("login.hbs")
 })
@@ -338,9 +356,13 @@ app.get("/logout", function (req, res){
 	req.session.isLoggedIn = false
 	res.redirect("/")
 })
-// RENDERS THE PAGES (ADMIN SIDE)
 
-// (In the navigation bar)
+
+/*
+	THE ADMIN SIDE PAGES
+*/
+
+// MAIN ADMIN PAGES (In the navigation bar)
 
 // home page
 app.get("/dashboard", function(req, res){
@@ -523,7 +545,6 @@ app.post("/blogs/add", function(req, res){
 
 })
 
-
 // faq add page
 app.get("/admin_faq", function(req, res){
 	res.render("admin_faq.hbs", {layout: "admin.hbs"})
@@ -617,9 +638,79 @@ app.get("/admin_pictures", function(req, res){
 	res.render("admin_pictures.hbs", {layout: "admin.hbs"})
 })
 
-//INSIDE THE MAIN PAGES
+app.post("/pictures/add", upload.single('picture_name'), function(req, res){
+	const projectid = req.body.projectid
+	const picture_title = req.body.picture_title
+	const picture_name = req.file.picture_name
 
-//projects (edit, remove, search)
+	const error_messages = []
+
+	// CONDITIONS AGAINST HACKERS
+	if(!req.session.isLoggedIn){
+		error_messages.push("You have to login!")
+	}
+
+	// CONDITIONS FOR PICTURE NAME
+	if(picture_name == undefined) {
+		error_messages.push("Project picture name should not be empty")
+	}
+
+	// CONDITIONS FOR THE PROJECT ID
+	if (projectid == "") {
+		error_messages.push("Project id should not be empty")
+	} else if (projectid < min_project_id_number) {
+		error_messages.push("Project id should not be less than " + min_project_id_number)
+	}
+
+	// CONDITIONS FOR THE PROJECT PICTURE
+	if (picture_title == "") {
+		error_messages.push("Picture title should not be empty")
+	} else if (picture_title.length > max_chara_20) {
+		error_messages.push("Picture title should be less than " + max_chara_20 + " characters")
+	} else if (picture_title.length < min_chara_3) {
+		error_messages.push("Picture title should be more than " + min_chara_3 + " characters")
+	}
+
+	if (error_messages.length == 0) {
+		const query = `
+			INSERT INTO pictures (picture_title, picture_name, projectid) VALUES (?, ?, ?)
+		`
+		const values = [picture_title, picture_name, projectid]
+
+		db.run(query, values, function(error){
+			if (error){
+				error_messages.push("Internal server error!")
+
+				const model = {
+					picture_title,
+					picture_name,
+					projectid,
+					error_messages,
+					layout: "admin.hbs"
+				}
+
+				res.render("admin_pictures.hbs", model)
+			} else{
+				res.redirect("/admin_pictures")
+			}
+		})
+	}else{
+		const model = {
+			picture_title,
+			picture_name,
+			projectid,
+			error_messages,
+			layout: "admin.hbs"
+		}
+
+		res.render("admin_pictures.hbs", model)
+	}
+
+})
+
+//INSIDE THE MAIN ADMIN PAGES
+
+//projects (edit, remove, edit projects table search)
 app.get("/projects_edit", function(req, res){
 
 	const query = `SELECT * FROM projects`
@@ -859,7 +950,7 @@ app.get("/projects_edit_search", function(req, res){
 
 })
 
-//blog (edit, remove)
+//blog (edit, remove, edit blogs table search)
 app.get("/blog_edit", function(req, res){
 	
 	const query = `SELECT * FROM blogs`
@@ -1088,7 +1179,7 @@ app.get("/blog_edit_search", function(req, res){
 
 })
 
-//faq (edit, remove)
+//faq (edit, remove, edit faq table search)
 app.get("/faq_edit", function(req, res){
 		
 	const query = `SELECT * FROM faqs`
@@ -1320,7 +1411,7 @@ app.get("/picture_edit", function(req, res){
 	
 	const query = `SELECT * FROM pictures`
 
-	db.all(query, function(error, blogs) {
+	db.all(query, function(error, pictures) {
 		const error_messages = []
 
 		if (error){
@@ -1328,7 +1419,7 @@ app.get("/picture_edit", function(req, res){
 		}
 
 		const model = {
-			blogs,
+			pictures,
 			error_messages,
 			layout: "admin.hbs"
 		}
@@ -1337,10 +1428,77 @@ app.get("/picture_edit", function(req, res){
 	}) 
 })
 
+app.post("/pictures/edit/:id", function(req, res){
+	const id = req.params.id
+	const picture_title = req.body.picture_title
+	const projectid = req.body.projectid
+
+	const error_messages = []
+
+	// CONDITIONS AGAINST HACKERS
+	if(!req.session.isLoggedIn){
+		error_messages.push("You have to login!")
+	}
+
+	// CONDITIONS FOR THE PROJECT ID
+	if (projectid == "") {
+		error_messages.push("Project id should not be empty")
+	} else if (projectid < min_project_id_number) {
+		error_messages.push("Project id should not be less than " + min_project_id_number)
+	}
+
+	// CONDITIONS FOR THE PROJECT PICTURE
+	if (picture_title == "") {
+		error_messages.push("Picture title should not be empty")
+	} else if (picture_title.length > max_chara_20) {
+		error_messages.push("Picture title should be less than " + max_chara_20 + " characters")
+	} else if (picture_title.length < min_chara_3) {
+		error_messages.push("Picture title should be more than " + min_chara_3 + " characters")
+	}
+
+	if (error_messages.length == 0) {
+		const query = `
+			UPDATE pictures SET picture_title = ?, projectid = ? WHERE id = ?
+		`
+	
+		const values = [picture_title, projectid, id]
+	
+		db.run(query, values, function(error) {
+			if(error) {
+				error_messages.push("Internal server error!")
+
+				const model = {
+					id,
+					picture_title,
+					projectid,
+					error_messages,
+					layout: "admin.hbs"
+				}
+
+				res.render("picture_edit.hbs", model)
+			} else {
+				res.redirect("/picture_edit")
+			}
+	
+		})
+
+	} else{
+		const model = {
+			id,
+			picture_title,
+			projectid,
+			error_messages,
+			layout: "admin.hbs"
+		}
+
+		res.render("picture_edit.hbs", model)
+	}
+})
+
 app.get("/picture_remove", function(req, res){
 	const query = `SELECT * FROM pictures`
 
-	db.all(query, function(error, faqs) {
+	db.all(query, function(error, pictures) {
 		const error_messages = []
 
 		if (error){
@@ -1348,7 +1506,7 @@ app.get("/picture_remove", function(req, res){
 		}
 
 		const model = {
-			faqs,
+			pictures,
 			error_messages,
 			layout: "admin.hbs"
 		}
@@ -1357,4 +1515,103 @@ app.get("/picture_remove", function(req, res){
 	}) 
 })
 
+app.post("/pictures/remove/:id", function(req, res){
+	const id = req.params.id
+
+	const error_messages = []
+
+	// CONDITIONS AGAINST HACKERS
+	if(!req.session.isLoggedIn){
+		error_messages.push("You have to login!")
+	}
+
+	if (error_messages.length == 0) {
+
+		const query = `
+			DELETE FROM pictures WHERE id = ?
+		`
+	
+		const values = [id]
+	
+		db.run(query, values, function(error) {
+			if(error) {
+				error_messages.push("Internal server error!")
+
+				const model = {
+					id,
+					error_messages,
+					layout: "admin.hbs"
+				}
+
+				res.render("picture_remove.hbs", model)
+			} else {
+				res.redirect("/picture_remove")
+			}
+	
+		})
+	} else{
+		const model = {
+			id,
+			error_messages,
+			layout: "admin.hbs"
+		}
+
+		res.render("picture_remove.hbs", model)
+	}
+})
+// FAQ TABLE EDIT SEARCH FUNCTION
+app.get("/picture_edit_search", function(req, res){
+	const searched_value = req.query.picture_table_search
+
+	const search_error_messages = []
+
+	// CONDITIONS AGAINST HACKERS
+	if(!req.session.isLoggedIn){
+		search_error_messages.push("You have to login!")
+	}
+
+	if (search_error_messages.length == 0 && searched_value) {
+		// THIS QUERY INSERTS VALUES FETCHED FROM THE WEB APPLICATION INTO THE SPECIFIED TABLE
+		const query = `
+		SELECT * FROM pictures WHERE picture_title LIKE ? OR picture_name LIKE ? OR projectid LIKE ?
+		`
+		const values = ["%" + searched_value + "%", "%" + searched_value + "%", "%" + searched_value + "%"]
+
+		db.all(query, values, function(error, pictures){
+			if (error){
+				search_error_messages.push("Internal server error (related to the search function)!")
+
+				const model = {
+					searched_value,
+					search_error_messages,
+					pictures,
+					layout: "admin.hbs"
+				}
+
+				res.render("picture_edit.hbs", model)
+			} else{
+
+				const model = {
+					searched_value,
+					search_error_messages,
+					pictures,
+					layout: "admin.hbs"
+				}
+				res.render("picture_edit.hbs", model)
+			}
+		})
+	} else{
+		const model = {
+			searched_value,
+			search_error_messages,
+			pictures,
+			layout: "admin.hbs"
+		}
+
+		res.render("picture_edit.hbs", model)
+	}
+
+})
+
+// LISTENS TO THE CHOSEN PORT NUMBER
 app.listen(8080)
