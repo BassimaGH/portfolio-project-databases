@@ -1,12 +1,12 @@
 <!-- content -->
 <div class="grid place-items-center gap-y-3 h-screen">
-	<form action="/login" method="post" class="grid place-items-center bg-secondary_color px-[5vw] py-[3vw] rounded">
+	<form action="/login" method="post" class="grid place-items-center bg-secondary_color px-[5vw] py-[3vw] rounded shadow-xl">
 		<h1 class="text-3xl text-light_nav_body_text_color font-bold">Login</h1>
-		<input type="text" name="username" placeholder="Username" class="mt-10 form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-gray-100 focus:outline-none">
-		<input type="password" name="password" placeholder="Password" class="mt-10 form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-gray-100 focus:outline-none">
+		<input type="text" name="username" placeholder="Username" class="mt-10 form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-[#000000] focus:ring-1 focus:ring-[#000000] focus:outline-none">
+		<input type="password" name="password" placeholder="Password" class="mt-10 form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:ring-1 focus:ring-[#000000] focus:border-[#000000] focus:outline-none">
 		{{#if failed_to_login}}
 			<p class="text-red-600 mt-10 font-bold">Wrong username or password!!</p>
 		{{/if}}
-		<input type="submit" class="mt-10 bg-primary_color text-white font-light py-2 px-8 rounded" value="Login">
+		<input type="submit" class="mt-10 bg-primary_color text-white font-light py-2 px-8 rounded hover:bg-hover_color hover:shadow-xl transition ease-in-out" value="Login">
 	</form>
 </div>

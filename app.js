@@ -32,8 +32,9 @@ const min_chara_20 = 20
 
 const min_project_id_number = 1
 
+// REGULAR EXPRESSIONS
 const numbers_regex = /^[0-9.,-/]+$/
-const date_regex = /^(0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])[- /.](19|20)\d\d$/
+const date_regex = /^(19|20)\d\d([- /.])(0[1-9]|1[012])\2(0[1-9]|[12][0-9]|3[01])$/
 
 // user name and password values
 const admin_username = "Bassima"
@@ -506,6 +507,8 @@ app.post("/blogs/add", function(req, res){
 	// CONDITIONS FOR POST DATE
 	if (post_date == "") {
 		error_messages.push("Post date should not be empty")
+	} else if (!(date_regex.test(post_date))) {
+		error_messages.push("Wrong date format")
 	}
 
 	// CONDITIONS FOR PROJECT ID
@@ -603,6 +606,8 @@ app.post("/faqs/add", function(req, res){
 	// CONDITIONS FOR THE POST DATE
 	if (post_date == "") {
 		error_messages.push("Post date should not be empty")
+	} else if (!(date_regex.test(post_date))) {
+		error_messages.push("Wrong date format")
 	}
 
 	// CONDITIONS FOR THE PROJECT ID
@@ -945,6 +950,8 @@ app.get("/projects_edit_search", function(req, res){
 
 	if(searched_value.length == 0) {
 		search_error_messages.push("You have to enter a value")
+	} else if (searched_value.trim() == "") {
+		search_error_messages.push("You have to enter a value (not only spaces)")
 	}
 
 	if (search_error_messages.length == 0 && searched_value) {
@@ -1055,8 +1062,8 @@ app.post("/blogs/edit/:id", function(req, res){
 	// CONDITIONS FOR POST DATE
 	if (post_date == "") {
 		error_messages.push("Post date should not be empty")
-	} else if (date_regex.test(post_date) == false) {
-		error_messages.push("Post date should be in this format (MM-DD-YYYY)")
+	} else if (!(date_regex.test(post_date))) {
+		error_messages.push("Wrong date format")
 	}
 
 	// CONDITIONS FOR PROJECT ID
@@ -1195,6 +1202,8 @@ app.get("/blog_edit_search", function(req, res){
 
 	if(searched_value.length == 0) {
 		search_error_messages.push("You have to enter a value")
+	} else if (searched_value.trim() == "") {
+		search_error_messages.push("You have to enter a value (not only spaces)")
 	}
 
 	if (search_error_messages.length == 0 && searched_value) {
@@ -1305,6 +1314,8 @@ app.post("/faqs/edit/:id", function(req, res){
 	// CONDITIONS FOR THE POST DATE
 	if (post_date == "") {
 		error_messages.push("Post date should not be empty")
+	} else if (!(date_regex.test(post_date))) {
+		error_messages.push("Wrong date format")
 	}
 
 	// CONDITIONS FOR THE PROJECT ID
@@ -1441,6 +1452,8 @@ app.get("/faq_edit_search", function(req, res){
 
 	if(searched_value.length == 0) {
 		search_error_messages.push("You have to enter a value")
+	} else if (searched_value.trim() == "") {
+		search_error_messages.push("You have to enter a value (not only spaces)")
 	}
 
 	if (search_error_messages.length == 0 && searched_value) {

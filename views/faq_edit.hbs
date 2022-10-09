@@ -34,9 +34,9 @@
 				</div>
 				<input type="text" id="faq_table_search" name="faq_table_search" class="block p-2 pl-10 w-80 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search for items">
 			</div>
-			<input type="submit" value="Search" class="mt-[35px] mb-[35px] bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color" name="search_faq" id="search_faq">
+			<input type="submit" value="Search" class="mt-[35px] mb-[35px] bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color hover:shadow-xl transition ease-in-out" name="search_faq" id="search_faq">
 		</form>
-		<a href="/faq_edit"><button type="button" class="mt-[35px] mb-[35px] bg-secondary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-gray-900">Reset search</button></a>
+		<a href="/faq_edit"><button type="button" class="mt-[35px] mb-[35px] bg-secondary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-gray-900 hover:shadow-xl transition ease-in-out">Reset search</button></a>
 	</div>
 
 	{{#if error_messages.length}}
@@ -80,7 +80,7 @@
 							<td class="hover:text-primary_color py-3 pr-[2vw] pl-[1vw] border-4 border-r-gray-300"><input type="text" name="post_answer" value="{{post_answer}}" class="bg-gray-100 py-2 px-4"></td>
 							<td class="hover:text-primary_color py-3 pr-[2vw] pl-[1vw] border-4 border-r-gray-300"><input type="date" name="post_date" value="{{post_date}}" class="bg-gray-100 py-2 px-4"></td>
 							<td class="hover:text-primary_color py-3 pr-[2vw] pl-[1vw] border-4 border-r-gray-300"><input type="number" name="projectid" value="{{projectid}}" class="bg-gray-100 py-2 px-4"></td>
-							<td class="pr-[2vw] pl-[1vw] border-4 border-r-gray-300"><input type="submit" value="Confirm edit" class="mt-[35px] mb-[35px] bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color" name="edit_faq_posts" id="edit_faq_posts"></td>
+							<td class="pr-[2vw] pl-[1vw] border-4 border-r-gray-300"><input type="submit" value="Confirm edit" class="mt-[35px] mb-[35px] bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color hover:shadow-xl transition ease-in-out" name="edit_faq_posts" id="edit_faq_posts"></td>
 						</form>
 					</tr>
 				{{/each}}

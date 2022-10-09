@@ -1,6 +1,6 @@
 <!-- content -->
-<div class="flex flex-col items-center gap-y-3 mt-[65px] h-screen">
-	<h1 class="text-3xl font-bold">Personal projects</h1>
+<div class="flex flex-col items-center gap-y-3 mt-[7vw] h-screen font-mono">
+	<h1 class="text-5xl text-gray-900">Personal projects</h1>
 
 	{{#if error_messages.length}}
 	<div class="p-4 space-y-4 rounded mt-[35px] border-4 border-red-600">
@@ -13,12 +13,12 @@
 	</div>
 	{{else}}
 		{{#if projects.length}}
-			<ul class="flex flex-row flex-wrap justify-center gap-x-3">
+			<ul class="flex flex-row flex-wrap justify-center gap-x-3 mt-[35px]">
 				{{#each projects}}
-					<div class="flex flex-col flex-wrap items-center text-light_nav_body_text_color bg-secondary_color py-[5vw] px-[10vw] m-[35px] rounded">
+					<div class="flex flex-col flex-wrap items-center text-light_nav_body_text_color bg-secondary_color py-[5vw] px-[10vw] m-[35px] rounded-md drop-shadow-2xl">
 						<h3 class="text-2xl">{{project_name}}</h3>
 						<p>{{project_sub_headline}}</p>
-						<a href="/projects/{{id}}"><button type="button" class="bg-primary_color text-white font-light py-2 px-6 rounded mt-[35px] hover:bg-hover_color">More</button></a>
+						<a href="/projects/{{id}}"><button type="button" class="bg-primary_color text-white font-light py-2 px-6 rounded mt-[35px] hover:bg-hover_color hover:shadow-xl transition ease-in-out">More</button></a>
 					</div>
 				{{/each}}
 			</ul>

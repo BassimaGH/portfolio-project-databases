@@ -23,22 +23,22 @@
 		</div>
 	{{/if}}
 
-	<form action="/projects/add" method="post" class="mt-[35px] mb-[35px] bg-gray-100 p-4 space-y-4">
+	<form action="/projects/add" method="post" class="mt-[35px] mb-[35px] bg-gray-100 p-4 space-y-4 shadow-xl">
 		<div class="flex flex-row gap-4 whitespace-nowrap">
 			<label for="project_name">Project name: </label>
-			<input name="project_name" type="text" id="project_name" value="{{project_name}}">
+			<input name="project_name" class="pl-1.5 border border-solid border-gray-300 rounded transition ease-in-out focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none" type="text" id="project_name" value="{{project_name}}">
 		</div>
 
 		<div class="flex flex-row gap-4 whitespace-nowrap">
 			<label for="project_sub_headline">Project sub-headline: </label>
-			<input type="text" name="project_sub_headline" id="project_sub_headline" value="{{project_sub_headline}}">
+			<input type="text" name="project_sub_headline" class="pl-1.5 border border-solid border-gray-300 rounded transition ease-in-out focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none" id="project_sub_headline" value="{{project_sub_headline}}">
 		</div>
 
 		<div class="flex flex-row gap-4 whitespace-nowrap">
 			<label for="project_description">Project description: </label>
-			<textarea name="project_description" id="project_description" class="form-textarea mt-1 block w-full" rows="3" placeholder="Enter project description">{{project_description}}</textarea>
+			<textarea name="project_description" id="project_description" class="pl-1.5 border border-solid border-gray-300 rounded transition ease-in-out focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none w-full" rows="3" placeholder="Enter project description">{{project_description}}</textarea>
 		</div>
 
-		<input type="submit" value="Add project" class="bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color" name="add_project" id="add_project">
+		<input type="submit" value="Add project" class="bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color hover:shadow-xl transition ease-in-out" name="add_project" id="add_project">
 	</form>
 </div>

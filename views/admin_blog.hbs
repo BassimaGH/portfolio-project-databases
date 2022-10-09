@@ -22,27 +22,27 @@
 		</div>
 	{{/if}}
 
-	<form action="/blogs/add" method="post" class="mt-[35px] bg-gray-100 p-4 space-y-4">
+	<form action="/blogs/add" method="post" class="mt-[35px] bg-gray-100 p-4 space-y-4 shadow-xl">
 		<div class="flex flex-row gap-4 whitespace-nowrap">
 			<label for="project_id">Project id: </label>
-			<input type="number" name="projectid" id="project_id" value="{{projectid}}">
+			<input type="number" name="projectid" id="project_id" value="{{projectid}}" class="pl-1.5 border border-solid border-gray-300 rounded transition ease-in-out focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none">
 		</div>
 
 		<div class="flex flex-row gap-4 whitespace-nowrap">
 			<label for="post_title">Post title: </label>
-			<input type="text" name="post_title" id="post_title" value="{{post_title}}">
+			<input type="text" name="post_title" id="post_title" value="{{post_title}}" class="pl-1.5 border border-solid border-gray-300 rounded transition ease-in-out focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none">
 		</div>
 
 		<div class="flex flex-row gap-4 whitespace-nowrap">
 			<label for="post_text">Post text: </label>
-			<textarea id="post_text" name="post_text" class="form-textarea mt-1 block w-full" rows="3" placeholder="Enter post text">{{post_text}}</textarea>
+			<textarea id="post_text" name="post_text" class="pl-1.5 border border-solid border-gray-300 rounded transition ease-in-out focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none w-full" rows="3" placeholder="Enter post text">{{post_text}}</textarea>
 		</div>
 
 		<div class="flex flex-row gap-4 whitespace-nowrap">
 			<label for="post_date">Post date: </label>
-			<input type="date" name="post_date" id="post_date" value="{{post_date}}">
+			<input type="date" name="post_date" id="post_date" value="{{post_date}}" class="pl-1.5 border border-solid border-gray-300 rounded transition ease-in-out focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none">
 		</div>
 
-		<input type="submit" value="Add post" class="bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color" name="add_post" id="add_post">
+		<input type="submit" value="Add post" class="bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color hover:shadow-xl transition ease-in-out" name="add_post" id="add_post">
 	</form>
 </div>
