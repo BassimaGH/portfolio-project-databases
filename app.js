@@ -32,6 +32,9 @@ const min_chara_20 = 20
 
 const min_project_id_number = 1
 
+const numbers_regex = /^[0-9.,-/]+$/
+const date_regex = /^(0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])[- /.](19|20)\d\d$/
+
 // user name and password values
 const admin_username = "Bassima"
 const admin_password = "2003"
@@ -394,6 +397,8 @@ app.post("/projects/add", function(req, res){
 		error_messages.push("Project name should be less than " + max_chara_20 + " characters")
 	} else if (project_name.length < min_chara_3) {
 		error_messages.push("Project name should be more than " + min_chara_3 + " characters")
+	} else if (numbers_regex.test(project_name)) {
+		error_messages.push("Project name should not consist of numbers only")
 	}
 
 	// CONDITIONS FOR THE PROJECT SUB-HEADLINE
@@ -403,7 +408,9 @@ app.post("/projects/add", function(req, res){
 		error_messages.push("Project sub-headline should be less than " + max_chara_50 + " characters")
 	} else if (project_sub_headline.length < min_chara_7) {
 		error_messages.push("Project sub-headline should be more than " + min_chara_7 + " characters")
-	} 
+	} else if (numbers_regex.test(project_sub_headline)) {
+		error_messages.push("Project sub-headline should not consist of numbers only")
+	}
 
 	// CONDITIONS FOR THE PROJECT DESCRIPTION
 	if (project_description == "") {
@@ -412,6 +419,8 @@ app.post("/projects/add", function(req, res){
 		error_messages.push("Project description should be less than " + max_chara_100 + " characters")
 	} else if (project_description.length < min_chara_20) {
 		error_messages.push("Project description should be more than " + min_chara_20 + " characters")
+	} else if (numbers_regex.test(project_description)) {
+		error_messages.push("Project description should not consist of numbers only")
 	}
 
 	if (error_messages.length == 0){
@@ -479,6 +488,8 @@ app.post("/blogs/add", function(req, res){
 		error_messages.push("Post title should be less than " + max_chara_20 + " characters")
 	} else if (post_title.length < min_chara_3) {
 		error_messages.push("Post title should be more than " + min_chara_3 + " characters")
+	} else if (numbers_regex.test(post_title)) {
+		error_messages.push("Post title should not consist of numbers only")
 	}
 
 	// CONDITIONS FOR POST TEXT
@@ -488,6 +499,8 @@ app.post("/blogs/add", function(req, res){
 		error_messages.push("Post text should be less than " + max_chara_100 + " characters")
 	} else if (post_text.length < min_chara_20) {
 		error_messages.push("Post text should be more than " + min_chara_20 + " characters")
+	} else if (numbers_regex.test(post_text)) {
+		error_messages.push("Post text should not consist of numbers only")
 	}
 
 	// CONDITIONS FOR POST DATE
@@ -500,6 +513,8 @@ app.post("/blogs/add", function(req, res){
 		error_messages.push("Project id should not be empty")
 	} else if (projectid < min_project_id_number) {
 		error_messages.push("Project id should not be less than " + min_project_id_number)
+	} else if (isNaN(projectid)) {
+		error_messages.push("Project Id should be a number")
 	}
 
 	if (error_messages.length == 0) {
@@ -570,6 +585,8 @@ app.post("/faqs/add", function(req, res){
 		error_messages.push("Post question should be less than " + max_chara_20 + " characters")
 	} else if (post_question.length < min_chara_3) {
 		error_messages.push("Post question should be more than " + min_chara_3 + " characters")
+	} else if (numbers_regex.test(post_question)) {
+		error_messages.push("Post question should not consist of numbers only")
 	}
 
 	// CONDITIONS FOR THE POST ANSWER
@@ -579,6 +596,8 @@ app.post("/faqs/add", function(req, res){
 		error_messages.push("Post answer should be less than " + max_chara_100 + " characters")
 	} else if (post_answer.length < min_chara_20) {
 		error_messages.push("Post answer should be more than " + min_chara_20 + " characters")
+	} else if (numbers_regex.test(post_answer)) {
+		error_messages.push("Post answer should not consist of numbers only")
 	}
 
 	// CONDITIONS FOR THE POST DATE
@@ -591,6 +610,8 @@ app.post("/faqs/add", function(req, res){
 		error_messages.push("Project id should not be empty")
 	} else if (projectid < min_project_id_number) {
 		error_messages.push("Project id should not be less than " + min_project_id_number)
+	} else if (isNaN(projectid)) {
+		error_messages.push("Project Id should be a number")
 	}
 
 	if (error_messages.length == 0) {
@@ -760,6 +781,8 @@ app.post("/projects/edit/:id", function(req, res){
 		error_messages.push("Project name should be less than " + max_chara_20 + " characters")
 	} else if (project_name.length < min_chara_3) {
 		error_messages.push("Project name should be more than " + min_chara_3 + " characters")
+	} else if (numbers_regex.test(project_name)) {
+		error_messages.push("Project name should not consist of numbers only")
 	}
 
 	// CONDITIONS FOR THE PROJECT SUB-HEADLINE
@@ -769,7 +792,9 @@ app.post("/projects/edit/:id", function(req, res){
 		error_messages.push("Project sub-headline should be less than " + max_chara_50 + " characters")
 	} else if (project_sub_headline.length < min_chara_7) {
 		error_messages.push("Project sub-headline should be more than " + min_chara_7 + " characters")
-	} 
+	} else if (numbers_regex.test(project_sub_headline)) {
+		error_messages.push("Project sub-headline should not consist of numbers only")
+	}
 
 	// CONDITIONS FOR THE PROJECT DESCRIPTION
 	if (project_description == "") {
@@ -778,6 +803,17 @@ app.post("/projects/edit/:id", function(req, res){
 		error_messages.push("Project description should be less than " + max_chara_100 + " characters")
 	} else if (project_description.length < min_chara_20) {
 		error_messages.push("Project description should be more than " + min_chara_20 + " characters")
+	} else if (numbers_regex.test(project_description)) {
+		error_messages.push("Project description should not consist of numbers only")
+	}
+
+	// CONDITIONS FOR THE PROJECT DESCRIPTION
+	if (editable_project_id == "") {
+		error_messages.push("Project Id should not be empty")
+	} else if (isNaN(editable_project_id)) {
+		error_messages.push("Project Id should be a number")
+	} else if (editable_project_id < min_project_id_number) {
+		error_messages.push("Project id should not be less than " + min_project_id_number)
 	}
 
 
@@ -907,6 +943,10 @@ app.get("/projects_edit_search", function(req, res){
 		search_error_messages.push("You have to login!")
 	}
 
+	if(searched_value.length == 0) {
+		search_error_messages.push("You have to enter a value")
+	}
+
 	if (search_error_messages.length == 0 && searched_value) {
 		// THIS QUERY INSERTS VALUES FETCHED FROM THE WEB APPLICATION INTO THE SPECIFIED TABLE
 		const query = `
@@ -941,7 +981,6 @@ app.get("/projects_edit_search", function(req, res){
 		const model = {
 			searched_value,
 			search_error_messages,
-			projects,
 			layout: "admin.hbs"
 		}
 
@@ -956,15 +995,20 @@ app.get("/blog_edit", function(req, res){
 	const query = `SELECT * FROM blogs`
 
 	db.all(query, function(error, blogs) {
-		const error_messages = []
+		const access_error_messages = []
+
+		// CONDITIONS AGAINST HACKERS
+		if(!req.session.isLoggedIn){
+			access_error_messages.push("You have to login!")
+		}
 
 		if (error){
-			error_messages.push("Internal server error!")
+			access_error_messages.push("Internal server error!")
 		}
 
 		const model = {
 			blogs,
-			error_messages,
+			access_error_messages,
 			layout: "admin.hbs"
 		}
 
@@ -993,6 +1037,8 @@ app.post("/blogs/edit/:id", function(req, res){
 		error_messages.push("Post title should be less than " + max_chara_20 + " characters")
 	} else if (post_title.length < min_chara_3) {
 		error_messages.push("Post title should be more than " + min_chara_3 + " characters")
+	} else if (numbers_regex.test(post_title)) {
+		error_messages.push("Post title should not consist of numbers only")
 	}
 
 	// CONDITIONS FOR POST TEXT
@@ -1002,11 +1048,15 @@ app.post("/blogs/edit/:id", function(req, res){
 		error_messages.push("Post text should be less than " + max_chara_100 + " characters")
 	} else if (post_text.length < min_chara_20) {
 		error_messages.push("Post text should be more than " + min_chara_20 + " characters")
+	} else if (numbers_regex.test(post_text)) {
+		error_messages.push("Post text should not consist of numbers only")
 	}
 
 	// CONDITIONS FOR POST DATE
 	if (post_date == "") {
 		error_messages.push("Post date should not be empty")
+	} else if (date_regex.test(post_date) == false) {
+		error_messages.push("Post date should be in this format (MM-DD-YYYY)")
 	}
 
 	// CONDITIONS FOR PROJECT ID
@@ -1014,6 +1064,8 @@ app.post("/blogs/edit/:id", function(req, res){
 		error_messages.push("Project id should not be empty")
 	} else if (projectid < min_project_id_number) {
 		error_messages.push("Project id should not be less than " + min_project_id_number)
+	} else if (isNaN(projectid)) {
+		error_messages.push("Project Id should be a number")
 	}
 
 	if (error_messages.length == 0) {
@@ -1065,15 +1117,20 @@ app.get("/blog_remove", function(req, res){
 	const query = `SELECT * FROM blogs`
 
 	db.all(query, function(error, blogs) {
-		const error_messages = []
+		const access_error_messages = []
+
+		// CONDITIONS AGAINST HACKERS
+		if(!req.session.isLoggedIn){
+			access_error_messages.push("You have to login!")
+		}
 
 		if (error){
-			error_messages.push("Internal server error!")
+			access_error_messages.push("Internal server error!")
 		}
 
 		const model = {
 			blogs,
-			error_messages,
+			access_error_messages,
 			layout: "admin.hbs"
 		}
 
@@ -1136,6 +1193,10 @@ app.get("/blog_edit_search", function(req, res){
 		search_error_messages.push("You have to login!")
 	}
 
+	if(searched_value.length == 0) {
+		search_error_messages.push("You have to enter a value")
+	}
+
 	if (search_error_messages.length == 0 && searched_value) {
 		// THIS QUERY INSERTS VALUES FETCHED FROM THE WEB APPLICATION INTO THE SPECIFIED TABLE
 		const query = `
@@ -1170,7 +1231,6 @@ app.get("/blog_edit_search", function(req, res){
 		const model = {
 			searched_value,
 			search_error_messages,
-			blogs,
 			layout: "admin.hbs"
 		}
 
@@ -1185,15 +1245,20 @@ app.get("/faq_edit", function(req, res){
 	const query = `SELECT * FROM faqs`
 
 	db.all(query, function(error, faqs) {
-		const error_messages = []
+		const access_error_messages = []
+
+		// CONDITIONS AGAINST HACKERS
+		if(!req.session.isLoggedIn){
+			access_error_messages.push("You have to login!")
+		}
 
 		if (error){
-			error_messages.push("Internal server error!")
+			access_error_messages.push("Internal server error!")
 		}
 
 		const model = {
 			faqs,
-			error_messages,
+			access_error_messages,
 			layout: "admin.hbs"
 		}
 
@@ -1222,6 +1287,8 @@ app.post("/faqs/edit/:id", function(req, res){
 		error_messages.push("Post question should be less than " + max_chara_20 + " characters")
 	} else if (post_question.length < min_chara_3) {
 		error_messages.push("Post question should be more than " + min_chara_3 + " characters")
+	} else if (numbers_regex.test(post_question)) {
+		error_messages.push("Post question should not consist of numbers only")
 	}
 
 	// CONDITIONS FOR THE POST ANSWER
@@ -1231,6 +1298,8 @@ app.post("/faqs/edit/:id", function(req, res){
 		error_messages.push("Post answer should be less than " + max_chara_100 + " characters")
 	} else if (post_answer.length < min_chara_20) {
 		error_messages.push("Post answer should be more than " + min_chara_20 + " characters")
+	} else if (numbers_regex.test(post_answer)) {
+		error_messages.push("Post answer should not consist of numbers only")
 	}
 
 	// CONDITIONS FOR THE POST DATE
@@ -1243,6 +1312,8 @@ app.post("/faqs/edit/:id", function(req, res){
 		error_messages.push("Project id should not be empty")
 	} else if (projectid < min_project_id_number) {
 		error_messages.push("Project id should not be less than " + min_project_id_number)
+	} else if (isNaN(projectid)) {
+		error_messages.push("Project Id should be a number")
 	}
 
 	if (error_messages.length == 0) {
@@ -1292,15 +1363,20 @@ app.get("/faq_remove", function(req, res){
 	const query = `SELECT * FROM faqs`
 
 	db.all(query, function(error, faqs) {
-		const error_messages = []
+		const access_error_messages = []
+
+		// CONDITIONS AGAINST HACKERS
+		if(!req.session.isLoggedIn){
+			access_error_messages.push("You have to login!")
+		}
 
 		if (error){
-			error_messages.push("Internal server error!")
+			access_error_messages.push("Internal server error!")
 		}
 
 		const model = {
 			faqs,
-			error_messages,
+			access_error_messages,
 			layout: "admin.hbs"
 		}
 
@@ -1363,6 +1439,10 @@ app.get("/faq_edit_search", function(req, res){
 		search_error_messages.push("You have to login!")
 	}
 
+	if(searched_value.length == 0) {
+		search_error_messages.push("You have to enter a value")
+	}
+
 	if (search_error_messages.length == 0 && searched_value) {
 		// THIS QUERY INSERTS VALUES FETCHED FROM THE WEB APPLICATION INTO THE SPECIFIED TABLE
 		const query = `
@@ -1397,7 +1477,6 @@ app.get("/faq_edit_search", function(req, res){
 		const model = {
 			searched_value,
 			search_error_messages,
-			faqs,
 			layout: "admin.hbs"
 		}
 
@@ -1412,15 +1491,20 @@ app.get("/picture_edit", function(req, res){
 	const query = `SELECT * FROM pictures`
 
 	db.all(query, function(error, pictures) {
-		const error_messages = []
+		const access_error_messages = []
+
+		// CONDITIONS AGAINST HACKERS
+		if(!req.session.isLoggedIn){
+			access_error_messages.push("You have to login!")
+		}
 
 		if (error){
-			error_messages.push("Internal server error!")
+			access_error_messages.push("Internal server error!")
 		}
 
 		const model = {
 			pictures,
-			error_messages,
+			access_error_messages,
 			layout: "admin.hbs"
 		}
 
@@ -1445,6 +1529,8 @@ app.post("/pictures/edit/:id", function(req, res){
 		error_messages.push("Project id should not be empty")
 	} else if (projectid < min_project_id_number) {
 		error_messages.push("Project id should not be less than " + min_project_id_number)
+	} else if (isNaN(projectid)) {
+		error_messages.push("Project Id should be a number")
 	}
 
 	// CONDITIONS FOR THE PROJECT PICTURE
@@ -1454,6 +1540,8 @@ app.post("/pictures/edit/:id", function(req, res){
 		error_messages.push("Picture title should be less than " + max_chara_20 + " characters")
 	} else if (picture_title.length < min_chara_3) {
 		error_messages.push("Picture title should be more than " + min_chara_3 + " characters")
+	} else if (numbers_regex.test(picture_title)) {
+		error_messages.push("Picture title should not consist of numbers only")
 	}
 
 	if (error_messages.length == 0) {
@@ -1499,15 +1587,20 @@ app.get("/picture_remove", function(req, res){
 	const query = `SELECT * FROM pictures`
 
 	db.all(query, function(error, pictures) {
-		const error_messages = []
+		const access_error_messages = []
+
+		// CONDITIONS AGAINST HACKERS
+		if(!req.session.isLoggedIn){
+			access_error_messages.push("You have to login!")
+		}
 
 		if (error){
-			error_messages.push("Internal server error!")
+			access_error_messages.push("Internal server error!")
 		}
 
 		const model = {
 			pictures,
-			error_messages,
+			access_error_messages,
 			layout: "admin.hbs"
 		}
 
@@ -1570,6 +1663,10 @@ app.get("/picture_edit_search", function(req, res){
 		search_error_messages.push("You have to login!")
 	}
 
+	if(searched_value.length == 0) {
+		search_error_messages.push("You have to enter a value")
+	}
+
 	if (search_error_messages.length == 0 && searched_value) {
 		// THIS QUERY INSERTS VALUES FETCHED FROM THE WEB APPLICATION INTO THE SPECIFIED TABLE
 		const query = `
@@ -1604,7 +1701,6 @@ app.get("/picture_edit_search", function(req, res){
 		const model = {
 			searched_value,
 			search_error_messages,
-			pictures,
 			layout: "admin.hbs"
 		}
 

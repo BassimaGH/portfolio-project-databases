@@ -11,6 +11,17 @@
 		</ul>
 	</div>
 
+	{{#if access_error_messages.length}}
+		<div class="p-4 space-y-4 rounded mt-[35px] border-4 border-red-600">
+			<h3 class="font-bold mt-5">Couldn't access the edit page because:</h3>
+			<ul class="mt-4 list-disc p-4">
+				{{#each access_error_messages}}
+					<li class="text-red-600 font-bold">{{this}}</li>
+				{{/each}}
+			</ul>
+		</div>
+	{{else}}
+
 	{{!-- copied code from https://flowbite.com/docs/components/tables/ --}}
 	<div class="pt-4 dark:bg-gray-900 flex flex-row gap-x-3">
 		<form action="/blog_edit_search" method="get" class="flex flex-row items-center gap-x-3">
@@ -37,7 +48,18 @@
 				{{/each}}
 			</ul>
 		</div>
-	{{else}}
+	{{/if}}
+
+	{{#if search_error_messages.length}}
+		<div class="p-4 space-y-4 rounded mt-[35px] border-4 border-red-600">
+			<h3 class="font-bold mt-5">Couldn't search the blog edit table because:</h3>
+			<ul class="mt-4 list-disc p-4">
+				{{#each search_error_messages}}
+					<li class="text-red-600 font-bold">{{this}}</li>
+				{{/each}}
+			</ul>
+		</div>
+	{{/if}}
 
 
 	<table class="table-fixed mt-[15px]">
@@ -57,7 +79,7 @@
 						<form action="/blogs/edit/{{id}}" method="post">
 							<td class="hover:text-primary_color py-3 pr-[2vw] pl-[1vw] border-4 border-x-gray-300"><input type="text" name="post_title" value="{{post_title}}" class="bg-gray-100 py-2 px-4"></td>
 							<td class="hover:text-primary_color py-3 pr-[2vw] pl-[1vw] border-4 border-r-gray-300"><input type="text" name="post_text" value="{{post_text}}" class="bg-gray-100 py-2 px-4"></td>
-							<td class="hover:text-primary_color py-3 pr-[2vw] pl-[1vw] border-4 border-r-gray-300"><input type="text" name="post_date" value="{{post_date}}" class="bg-gray-100 py-2 px-4"></td>
+							<td class="hover:text-primary_color py-3 pr-[2vw] pl-[1vw] border-4 border-r-gray-300"><input type="date" name="post_date" value="{{post_date}}" class="bg-gray-100 py-2 px-4"></td>
 							<td class="hover:text-primary_color py-3 pr-[2vw] pl-[1vw] border-4 border-r-gray-300"><input type="number" name="projectid" value="{{projectid}}" class="bg-gray-100 py-2 px-4"></td>
 							<td class="pr-[2vw] pl-[1vw] border-4 border-r-gray-300"><input type="submit" value="Confirm edit" class="mt-[35px] mb-[35px] bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color" name="edit_blog_posts" id="edit_blog_posts"></td>
 						</form>
