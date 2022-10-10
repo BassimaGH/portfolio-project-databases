@@ -11,6 +11,17 @@
 		</ul>
 	</div>
 
+	{{#if error_messages.length}}
+	<div class="p-4 space-y-4 rounded mt-[35px] border-4 border-red-600">
+		<h3 class="font-bold">Couldn't create the project pictures because:</h3>
+		<ul class="list-disc ml-4">
+			{{#each error_messages}}
+				<li class="text-red-600 mt-4 font-bold">{{this}}</li>
+			{{/each}}
+		</ul>
+	</div>
+	{{/if}}
+
 	<form action="/pictures/add" method="post" enctype="multipart/form-data" class="mt-[35px] mb-[35px] bg-gray-100 p-4 space-y-4 shadow-xl">
 		<div class="flex flex-row gap-4 whitespace-nowrap">
 			<label for="projectid">Project id: </label>
@@ -24,7 +35,7 @@
 
 		<div class="flex flex-row gap-4 whitespace-nowrap">
 			<label for="picture_name">Picture name</label>
-			<input type="file" name="picture_name" id="picture_name">
+			<input type="file" name="picture_name" value="{{picture_name}}" id="picture_name">
 		</div>
 
 		<input type="submit" value="Add picture" class="bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color hover:shadow-xl transition ease-in-out" name="add_picture" id="add_picture">

@@ -76,9 +76,9 @@
 			{{#if pictures.length}}
 				{{#each pictures}}
 					<tr>
-						<form action="/pictures/edit/{{id}}" method="post">
+						<form action="/pictures/edit/{{id}}" method="post" enctype="multipart/form-data">
 							<td class="hover:text-primary_color py-3 pr-[2vw] pl-[1vw] border-4 border-x-gray-300"><input type="text" name="picture_title" value="{{picture_title}}" class="bg-gray-100 py-2 px-4"></td>
-							<td class="hover:text-primary_color py-3 pr-[2vw] pl-[1vw] border-4 border-r-gray-300"><input type="text" name="picture_name" value="{{picture_name}}" class="bg-gray-100 py-2 px-4"></td>
+							<td class="hover:text-primary_color py-3 pr-[2vw] pl-[1vw] border-4 border-r-gray-300"><input type="file" name="picture_name" value="{{picture_name}}" class="bg-gray-100 py-2 px-4"></td>
 							<td class="hover:text-primary_color py-3 pr-[2vw] pl-[1vw] border-4 border-r-gray-300"><input type="number" name="projectid" value="{{projectid}}" class="bg-gray-100 py-2 px-4"></td>
 							<td class="pr-[2vw] pl-[1vw] border-4 border-r-gray-300"><input type="submit" value="Confirm edit" class="mt-[35px] mb-[35px] bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color hover:shadow-xl transition ease-in-out" name="edit_pictures" id="edit_pictures"></td>
 						</form>

@@ -15,22 +15,21 @@
 		</div>
 	{{else}}
 		{{#if project}}
-			<div class="flex flex-col items-center text-light_nav_body_text_color mt-[35px] bg-secondary_color py-[6vw] px-[5vw] rounded">
+			<div class="flex flex-col items-center text-light_nav_body_text_color mt-[35px] bg-secondary_color py-[6vw] md:px-[9vw] px-[3vw] rounded mx-[5vw]">
 				<h1 class="text-3xl">{{project.project_name}}</h1>
 				<p>{{project.project_sub_headline}}</p>
 				<ul class="flex flex-row gap-10 mt-[35px] items-center">
-					<a href="/projects/{{project.id}}"><li class="hover:text-primary_color">Description</li></a>
-					<a href="/projects/{{project.id}}/project_picture"><li class="text-primary_color">Project pictures</li></a>
-					<a href="/projects/{{project.id}}/project_blog"><li class="hover:text-primary_color">Blog</li></a>
-					<a href="/projects/{{project.id}}/project_faq"><li class="hover:text-primary_color">FAQs</li></a>
+					<a href="/projects/{{project.id}}"><li class="hover:text-primary_color md:text-[2vw] text-[3vw]">Description</li></a>
+					<a href="/projects/{{project.id}}/project_picture"><li class="text-primary_color md:text-[2vw] text-[3vw]">Project pictures</li></a>
+					<a href="/projects/{{project.id}}/project_blog"><li class="hover:text-primary_color md:text-[2vw] text-[3vw]">Blog</li></a>
+					<a href="/projects/{{project.id}}/project_faq"><li class="hover:text-primary_color md:text-[2vw] text-[3vw]">FAQs</li></a>
 				</ul>
-				<ul class="mt-[35px] bg-darker_secondary_color rounded py-[5vw] px-[7vw]">
+				<ul class="flex flex-col items-center mt-[35px] bg-darker_secondary_color rounded py-[5vw]">
 					<h4 class="mb-8 text-3xl">Project Pictures</h4>
 					{{#each pictures}}
-					<li class="border-4 mb-[25px] self-start border-primary_color rounded pr-[9vw] pl-[1vw]">
-						<p class="text-1xl italic font-light">{{picture_title}}</p>
-						<img src="./public/images/{{post.picture_name}}">
-					</li>
+						<li class="mb-[25px] self-start flex flex-col items-center">
+							<img src="/images/{{picture_name}}" class="w-[50%] border-4 border-primary_color rounded">
+						</li>
 					{{/each}}
 				</ul>
 
