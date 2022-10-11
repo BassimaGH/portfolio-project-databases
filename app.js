@@ -1619,7 +1619,7 @@ app.get("/picture_edit", function(req, res){
 	}) 
 })
 
-app.post("/pictures/edit/:id", function(req, res){
+app.post("/pictures/edit/:id", upload.single('picture_name'), function(req, res){
 	const id = req.params.id
 	const picture_title = req.body.picture_title
 	const projectid = req.body.projectid

@@ -1,10 +1,10 @@
 <!-- content -->
-<div class="mt-[35px]">
-	<h1 class="font-bold text-3xl">Projects</h1>
-	<h3 class="text-2xl whitespace-nowrap">Here you can edit projects</h3>
+<div class="mt-[35px] px-[2vw] md:px-[0vw]">
+	<h1 class="font-bold text-3xl pl-[2vw] md:pl-[0vw]">Projects</h1>
+	<h3 class="text-2xl whitespace-nowrap pl-[2vw] md:pl-[0vw]">Here you can edit projects</h3>
 
 	<div>
-		<ul class="flex flex-row gap-10 mt-[35px]">
+		<ul class="flex flex-row gap-10 mt-[35px] pl-[2vw] md:pl-[0vw]">
 			<a href="/admin_projects"><li class="hover:text-hover_color">Add</li></a>
 			<a href="/projects_edit"><li class="text-primary_color">Edit</li></a>
 			<a href="/projects_remove"><li class="hover:text-hover_color">Remove</li></a>
@@ -23,8 +23,8 @@
 	{{else}}
 
 	{{!-- copied code from https://flowbite.com/docs/components/tables/ --}}
-	<div class="pt-4 dark:bg-gray-900 flex flex-row gap-x-3">
-		<form action="/projects_edit_search" method="get" class="flex flex-row items-center gap-x-3">
+	<div class="pt-4 dark:bg-gray-900 flex flex-col items-center md:flex-row gap-x-3">
+		<form action="/projects_edit_search" method="get" class="flex flex-col md:flex-row items-center gap-x-3">
 			<label for="project_table_search" class="sr-only">Search</label>
 			<div class="relative mt-1">
 				<div class="flex absolute inset-y-[10px] left-0 pl-3 pointer-events-none">
@@ -34,9 +34,9 @@
 				</div>
 				<input type="text" id="project_table_search" name="project_table_search" class="block p-2 pl-10 w-80 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search for items">
 			</div>
-			<input type="submit" value="Search" class="mt-[35px] mb-[35px] bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color hover:shadow-xl transition ease-in-out" name="search_projects" id="search_projects">
+			<input type="submit" value="Search" class="mt-[35px] bg-primary_color text-white font-light py-2 px-[2.2rem] rounded mt-[35px] hover:bg-hover_color hover:shadow-xl transition ease-in-out" name="search_projects" id="search_projects">
 		</form>
-		<a href="/projects_edit"><button type="button" class="mt-[35px] mb-[35px] bg-secondary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-gray-900  hover:shadow-xl transition ease-in-out">Reset search</button></a>
+		<a href="/projects_edit"><button type="button" class="mt-[35px] mb-[35px] bg-secondary_color text-white font-light py-2 px-4 rounded hover:bg-gray-900  hover:shadow-xl transition ease-in-out">Reset search</button></a>
 	</div>
 
 	{{#if search_error_messages.length}}
@@ -61,7 +61,8 @@
 		</div>
 	{{/if}}
 
-	<table class="table-fixed mt-[15px] mb-[4vw]">
+	<div class="overflow-x-auto mb-[4vw]">
+		<table class="table-fixed mt-[15px] overflow-x-auto">
 		<thead class="bg-gray-50 p-4">
 			<tr>
 				<th scope="col" class="py-3 pl-[2vw] text-start border-4 border-x-gray-300">Id</th>
@@ -88,6 +89,8 @@
 				<p>There are no projects at the moment.</p>
 			{{/if}}
 		</tbody>
-	</table>
+		</table>
+	</div>
+	
 	{{/if}}
 </div>

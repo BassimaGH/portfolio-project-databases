@@ -1,10 +1,10 @@
 <!-- content -->
-<div class="mt-[35px]">
-	<h1 class="font-bold text-3xl">Pictures</h1>
-	<h3 class="text-2xl whitespace-nowrap">Here you can remove project pictures</h3>
+<div class="mt-[35px] px-[2vw] md:px-[0vw]">
+	<h1 class="font-bold text-3xl pl-[2vw] md:pl-[0vw]">Pictures</h1>
+	<h3 class="text-2xl md:whitespace-nowrap pl-[2vw] md:pl-[0vw]">Here you can remove project pictures</h3>
 
 	<div>
-		<ul class="flex flex-row gap-10 mt-[35px]">
+		<ul class="flex flex-row gap-10 mt-[35px] pl-[2vw] md:pl-[0vw]">
 			<a href="/admin_pictures"><li class="hover:text-hover_color">Add</li></a>
 			<a href="/picture_edit"><li class="hover:text-hover_color">Edit</li></a>
 			<a href="/picture_remove"><li class="text-primary_color">Remove</li></a>
@@ -33,14 +33,14 @@
 		</div>
 	{{/if}}
 
-
-	<table class="table-fixed mt-[15px]">
+	<div class="overflow-x-auto mb-[4vw]">
+		<table class="table-fixed mt-[15px]">
 		<thead class="bg-gray-50 p-4">
 			<tr>
-				<th scope="col" class="py-3 pl-[2vw] text-start border-4 border-r-gray-300">Picture Title</th>
-				<th scope="col" class="py-3 pl-[2vw] text-start border-4 border-r-gray-300">Picture Name</th>
-				<th scope="col" class="py-3 pl-[2vw] text-start border-4 border-r-gray-300">Project id</th>
-				<th scope="col" class="py-3 pl-[2vw] text-start border-4 border-r-gray-300">Action</th>
+				<th scope="col" class="py-3 px-6 text-start border-4 border-x-gray-300">Picture Title</th>
+				<th scope="col" class="py-3 px-6 text-start border-4 border-r-gray-300">Picture Name</th>
+				<th scope="col" class="py-3 px-6 text-start border-4 border-r-gray-300">Project id</th>
+				<th scope="col" class="py-3 px-6 text-start border-4 border-r-gray-300">Action</th>
 			</tr>
 		</thead>
 		<tbody class="bg-gray-100 space-y-4 p-4">
@@ -48,10 +48,10 @@
 				{{#each pictures}}
 					<tr>
 						<form action="/pictures/remove/{{id}}" method="post" class="mt-[35px] space-y-4">
-							<td class="hover:text-primary_color py-3 pr-[2vw] pl-[1vw] border-4 border-x-gray-300">{{picture_title}}</td>
-							<td class="hover:text-primary_color py-3 pr-[2vw] pl-[1vw] border-4 border-r-gray-300">{{picture_name}}</td>
-							<td class="hover:text-primary_color py-3 pr-[2vw] pl-[1vw] border-4 border-r-gray-300">{{projectid}}</td>
-							<td class="pr-[2vw] pl-[1vw] border-4 border-r-gray-300"><input type="submit" value="Remove" class="mt-[35px] mb-[35px] bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color hover:shadow-xl transition ease-in-out" name="remove_picture" id="remove_picture"></td>
+							<td class="py-3 px-6 border-4 border-x-gray-300">{{picture_title}}</td>
+							<td class="py-3 px-6 border-4 border-r-gray-300">{{picture_name}}</td>
+							<td class="py-3 px-6 border-4 border-r-gray-300">{{projectid}}</td>
+							<td class="border-4 border-r-gray-300 px-[2vw] pb-[2vw]"><input type="submit" value="Remove" class="mt-[35px] mb-[35px] bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color hover:shadow-xl transition ease-in-out" name="remove_picture" id="remove_picture"></td>
 						</form>
 					</tr>
 				{{/each}}
@@ -59,6 +59,7 @@
 				<p>There are no pictures at the moment.</p>
 			{{/if}}
 		</tbody>
-	</table>
+		</table>
+	</div>
 	{{/if}}
 </div>

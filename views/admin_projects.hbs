@@ -1,10 +1,10 @@
 <!-- content -->
-<div class="mt-[35px]">
-	<h1 class="font-bold text-3xl">Projects</h1>
-	<h3 class="text-2xl whitespace-nowrap">Here you can add projects</h3>
+<div class="mt-[35px] px-[2vw] md:px-[0vw]">
+	<h1 class="font-bold text-3xl pl-[2vw] md:pl-[0vw]">Projects</h1>
+	<h3 class="text-2xl whitespace-nowrap pl-[2vw] md:pl-[0vw]">Here you can add projects</h3>
 
 	<div>
-		<ul class="flex flex-row gap-10 mt-[35px]">
+		<ul class="flex flex-row gap-10 mt-[35px] pl-[2vw] md:pl-[0vw]">
 			<a href="/admin_projects"><li class="text-primary_color">Add</li></a>
 			<a href="/projects_edit"><li class="hover:text-hover_color">Edit</li></a>
 			<a href="/projects_remove"><li class="hover:text-hover_color">Remove</li></a>
@@ -24,17 +24,17 @@
 	{{/if}}
 
 	<form action="/projects/add" method="post" class="mt-[35px] mb-[35px] bg-gray-100 p-4 space-y-4 shadow-xl">
-		<div class="flex flex-row gap-4 whitespace-nowrap">
+		<div class="flex flex-col md:flex-row gap-4 whitespace-nowrap">
 			<label for="project_name">Project name: </label>
 			<input name="project_name" class="pl-1.5 border border-solid border-gray-300 rounded transition ease-in-out focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none" type="text" id="project_name" value="{{project_name}}">
 		</div>
 
-		<div class="flex flex-row gap-4 whitespace-nowrap">
+		<div class="flex flex-col md:flex-row gap-4 whitespace-nowrap">
 			<label for="project_sub_headline">Project sub-headline: </label>
 			<input type="text" name="project_sub_headline" class="pl-1.5 border border-solid border-gray-300 rounded transition ease-in-out focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none" id="project_sub_headline" value="{{project_sub_headline}}">
 		</div>
 
-		<div class="flex flex-row gap-4 whitespace-nowrap">
+		<div class="flex flex-col md:flex-row gap-4 whitespace-nowrap">
 			<label for="project_description">Project description: </label>
 			<textarea name="project_description" id="project_description" class="pl-1.5 border border-solid border-gray-300 rounded transition ease-in-out focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none w-full" rows="3" placeholder="Enter project description">{{project_description}}</textarea>
 		</div>

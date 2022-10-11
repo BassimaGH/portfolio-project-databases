@@ -1,10 +1,10 @@
 <!-- content -->
-<div class="mt-[35px]">
-	<h1 class="font-bold text-3xl">FAQ posts</h1>
-	<h3 class="text-2xl whitespace-nowrap">Here you can remove FAQ posts</h3>
+<div class="mt-[35px] px-[2vw] md:px-[0vw]">
+	<h1 class="font-bold text-3xl pl-[2vw] md:pl-[0vw]">FAQ posts</h1>
+	<h3 class="text-2xl whitespace-nowrap pl-[2vw] md:pl-[0vw]">Here you can remove FAQ posts</h3>
 
 	<div>
-		<ul class="flex flex-row gap-10 mt-[35px]">
+		<ul class="flex flex-row gap-10 mt-[35px] pl-[2vw] md:pl-[0vw]">
 			<a href="/admin_faq"><li class="hover:text-hover_color">Add</li></a>
 			<a href="/faq_edit"><li class="hover:text-hover_color">Edit</li></a>
 			<a href="/faq_remove"><li class="text-primary_color">Remove</li></a>
@@ -33,7 +33,8 @@
 		</div>
 	{{/if}}
 
-	<table class="table-fixed mt-[15px]">
+	<div class="overflow-x-auto mb-[4vw]">
+		<table class="table-fixed mt-[15px]">
 		<thead class="bg-gray-50 p-4">
 			<tr>
 				<th scope="col" class="py-3 px-6 text-start border-4 border-x-gray-300">Post Question</th>
@@ -60,6 +61,7 @@
 				<p>There are no projects at the moment.</p>
 			{{/if}}
 		</tbody>
-	</table>
+		</table>
+	</div>
 	{{/if}}
 </div>
