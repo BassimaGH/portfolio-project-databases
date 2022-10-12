@@ -34,7 +34,7 @@
 				</div>
 				<input type="text" id="project_table_search" name="project_table_search" class="block p-2 pl-10 w-80 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search for items">
 			</div>
-			<input type="submit" value="Search" class="mt-[35px] bg-primary_color text-white font-light py-2 px-[2.2rem] rounded mt-[35px] hover:bg-hover_color hover:shadow-xl transition ease-in-out" name="search_projects" id="search_projects">
+			<input type="submit" value="Search" class="mt-[35px] mb-[35px] bg-primary_color text-white font-light py-2 px-[2.2rem] rounded mt-[35px] hover:bg-hover_color hover:shadow-xl transition ease-in-out" name="search_projects" id="search_projects">
 		</form>
 		<a href="/projects_edit"><button type="button" class="mt-[35px] mb-[35px] bg-secondary_color text-white font-light py-2 px-4 rounded hover:bg-gray-900  hover:shadow-xl transition ease-in-out">Reset search</button></a>
 	</div>
@@ -65,7 +65,6 @@
 		<table class="table-fixed mt-[15px] overflow-x-auto">
 		<thead class="bg-gray-50 p-4">
 			<tr>
-				<th scope="col" class="py-3 pl-[2vw] text-start border-4 border-x-gray-300">Id</th>
 				<th scope="col" class="py-3 pl-[2vw] text-start border-4 border-x-gray-300">Name</th>
 				<th scope="col" class="py-3 pl-[2vw] text-start border-4 border-r-gray-300">Sub-headline</th>
 				<th scope="col" class="py-3 pl-[2vw] text-start border-4 border-r-gray-300">Description</th>
@@ -77,7 +76,6 @@
 				{{#each projects}}
 					<tr>
 						<form action="/projects/edit/{{id}}" method="post">
-							<td class="hover:text-primary_color py-3 pr-[2vw] pl-[1vw] border-4 border-x-gray-300"><input type="number" name="editable_project_id" value="{{id}}" class="bg-gray-100 py-2 px-4"></td>
 							<td class="hover:text-primary_color py-3 pr-[2vw] pl-[1vw] border-4 border-x-gray-300"><input type="text" name="project_name" value="{{project_name}}" class="bg-gray-100 py-2 px-4"></td>
 							<td class="hover:text-primary_color py-3 pr-[2vw] pl-[1vw] border-4 border-r-gray-300"><input type="text" name="project_sub_headline" value="{{project_sub_headline}}" class="bg-gray-100 py-2 px-4"></td>
 							<td class="hover:text-primary_color py-3 pr-[2vw] pl-[1vw] border-4 border-r-gray-300"><input type="text" name="project_description" value="{{project_description}}" class="bg-gray-100 py-2 px-4"></td>

@@ -1,24 +1,11 @@
 // APP MAIN PACKAGES (SETTINGS)
 const express = require("express")
 const expressHandlebars = require("express-handlebars")
-const sqlite3 = require("sqlite3")
 const expressSession = require("express-session")
 const like = require("like")
 const multer  = require('multer')
-
-// MIDDLEWARE FOR PICTURES
-const storage = multer.diskStorage({
-	destination(req, file, cb) {
-		cb(null, './public/images')
-	},
-	filename(req, file, cb) {
-		console.log(file)
-		cb(null, file.originalname)
-	},
-})
-const upload = multer({
-	storage
-})
+const bcrypt = require('bcrypt')
+const db = require("./db")
 
 // APP GLOBAL VARIABLES VALUES
 // text and numbers character limits
@@ -38,55 +25,7 @@ const date_regex = /^(19|20)\d\d([- /.])(0[1-9]|1[012])\2(0[1-9]|[12][0-9]|3[01]
 
 // user name and password values
 const admin_username = "Bassima"
-const admin_password = "2003"
-
-// DATABASE NAME
-const db = new sqlite3.Database("portfolio_database.db")
-
-db.run(`PRAGMA foreign_keys = ON`)
-
-// PROJECTS TABLE
-// (RUNS THE SQL QUERY AND RETURNS A DATABASE OBJECT)
-db.run(`
-	CREATE TABLE IF NOT EXISTS projects (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		project_name TEXT,
-		project_sub_headline TEXT,
-		project_description TEXT
-	)`
-)
-// BLOG POSTS TABLE
-db.run(`
-	CREATE TABLE IF NOT EXISTS blogs (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		post_title TEXT,
-		post_text TEXT,
-		post_date TEXT,
-		projectid INTEGER,
-		FOREIGN KEY (projectid) REFERENCES projects (id) ON DELETE CASCADE
-	)`
-)
-// FAQS TABLE
-db.run(`
-	CREATE TABLE IF NOT EXISTS faqs (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		post_question TEXT,
-		post_answer TEXT,
-		post_date TEXT,
-		projectid INTEGER,
-		FOREIGN KEY (projectid) REFERENCES projects (id) ON DELETE CASCADE
-	)`
-)
-// PICTURES TABLE
-db.run(`
-	CREATE TABLE IF NOT EXISTS pictures (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		picture_title TEXT,
-		picture_name TEXT,
-		projectid INTEGER,
-		FOREIGN KEY (projectid) REFERENCES projects (id) ON DELETE CASCADE
-	)`
-)
+const admin_password_hash = "$2b$10$ErbFbAUqXYS8JsCHg0PRj.Odi53ib.MnWBrpWdE0aIDMskXA1zTCu"
 
 // VARIABLE THAT WILL REPRESENT THE WHOLE APP
 const app = express()
@@ -95,6 +34,20 @@ const app = express()
 app.engine("hbs", expressHandlebars.engine({
 	defaultLayout: "main.hbs"
 }))
+
+// MIDDLEWARE FOR PICTURES
+const storage = multer.diskStorage({
+	destination(req, file, cb) {
+		cb(null, './public/images')
+	},
+	filename(req, file, cb) {
+		console.log(file)
+		cb(null, file.originalname)
+	},
+})
+const upload = multer({
+	storage
+})
 
 // ADDS THE STATIC MIDDLEWARE FOR THE public FOLDER (CONTAINS STATIC FILES)
 app.use (
@@ -138,7 +91,6 @@ app.get("/", function(req, res){
 	const model = {
 		session: req.session
 	}
-
 	res.render("start.hbs", model)
 })
 
@@ -152,186 +104,109 @@ app.get("/contact", function(req, res){
 	res.render("contact.hbs")
 })
 
-// projects main page
+// projects main page (ADDED IN THE DB.JS)
 app.get("/projects", function(req, res){
-
-	// THIS QUERY SELECTS ALL FROM A CERTAIN TABLE
-	const query = `SELECT * FROM projects`
-
-	db.all(query, function(error, projects) {
-
+	db.get_all_projects(function(error, projects) {
 		const error_messages = []
-
 		if (error){
 			error_messages.push("Internal server error!")
 		}
-
 		const model = {
 			projects,
 			error_messages 
 		}
-
 		res.render("projects.hbs", model)
-
 	})
 })
 
-// DISPLAYS A SINGLE PROJECT DETAILS PAGE
+// DISPLAYS A SINGLE PROJECT DETAILS PAGE (ADDED IN THE DB.JS)
 app.get("/projects/:id", function(req, res){
 	// REQUESTS THE ID FROM AN OBJECT CONTAINING PROPERTIES MAPPED TO THE NAMED ROUTE “parameters” (GETS THE ID VALUE FROM A URL LIKE "/projects/:id")
 	const id = req.params.id
-	// THIS QUERY SELECTS FROM A CERTAIN TABLE WHERE THE ID IS EQUAL TO THE ID REQUESTED
-	const query = `SELECT * FROM projects WHERE id = ?`
-	// STORE THE VALUE FROM THAT OBJECT TO AN ARRAY
-	const values = [id]
-
 	// (RUNS THE SQL QUERY AND RETURNS A DATABASE OBJECT RESULT ROW) 
-	db.get(query, values, function(error, project) {
-
+	db.get_project_by_id(id, function(error, project) {
 		const error_messages = []
-
 		if (error){
 			error_messages.push("Internal server error!")
 		}
-
 		const model = {
 			project,
 			error_messages
 		}
-
 		res.render("project_details.hbs", model)
-
 	})
-
 })
 
-// DISPLAYS A SINGLE PROJECT BLOG PAGE
+// DISPLAYS A SINGLE PROJECT BLOG PAGE (ADDED IN THE DB.JS)
 app.get("/projects/:id/project_blog", function(req, res){
 	// REQUESTS THE ID FROM AN OBJECT CONTAINING PROPERTIES MAPPED TO THE NAMED ROUTE “parameters” (GETS THE ID VALUE FROM A URL LIKE "/projects/:id")
 	const id = req.params.id
-	// THIS QUERY SELECTS FROM A CERTAIN TABLE WHERE THE ID IS EQUAL TO THE ID REQUESTED
-	const query = `SELECT * FROM projects WHERE id = ? `
-	// STORE THE VALUE FROM THAT OBJECT TO AN ARRAY
-	const values = [id]
-
-	// (RUNS THE SQL QUERY AND RETURNS A DATABASE OBJECT RESULT ROW) 
-	db.get(query, values, function(error, project) {
-		// REQUESTS THE ID FROM AN OBJECT CONTAINING PROPERTIES MAPPED TO THE NAMED ROUTE “parameters” (GETS THE ID VALUE FROM A URL LIKE "/projects/:id")
+	db.get_project_by_id(id, function(error, project) {
 		const id = req.params.id
-		// THIS QUERY SELECTS FROM A CERTAIN TABLE WHERE THE ID IS EQUAL TO THE ID REQUESTED
-		const query = `SELECT * FROM blogs WHERE projectid = ? `
-		// STORE THE VALUE FROM THAT OBJECT TO AN ARRAY
-		const values = [id]
-
 		const error_messages = []
-
 		if (error){
 			error_messages.push("Internal server error!")
 		}
-
-		// (RUNS THE SQL QUERY AND RETURNS ALL DATABASE OBJECT RESULT ROWA) 
-		db.all(query, values, function(error, blogs) {
-
+		db.get_blogs_by_project_id(id, function(error, blogs){
 			if (error){
 				error_messages.push("Internal server error!")
 			}
-	
 			const model = {
 				project,
 				blogs,
 				error_messages 
 			}
-
 			res.render("project_blog.hbs", model)
 		})
 	})
-	
 })
 
-// DISPLAYS A SINGLE PROJECT FAQ PAGE
+// DISPLAYS A SINGLE PROJECT FAQ PAGE (ADDED IN THE DB.JS)
 app.get("/projects/:id/project_faq", function(req, res){
 	// REQUESTS THE ID FROM AN OBJECT CONTAINING PROPERTIES MAPPED TO THE NAMED ROUTE “parameters” (GETS THE ID VALUE FROM A URL LIKE "/projects/:id")
 	const id = req.params.id
-	// THIS QUERY SELECTS FROM A CERTAIN TABLE WHERE THE ID IS EQUAL TO THE ID REQUESTED
-	const query = `SELECT * FROM projects WHERE id = ? `
-	// STORE THE VALUE FROM THAT OBJECT TO AN ARRAY
-	const values = [id]
-
-	db.get(query, values, function(error, project) {
-		// REQUESTS THE ID FROM AN OBJECT CONTAINING PROPERTIES MAPPED TO THE NAMED ROUTE “parameters” (GETS THE ID VALUE FROM A URL LIKE "/projects/:id")
+	db.get_project_by_id(id, function(error, project) {
 		const id = req.params.id
-		// THIS QUERY SELECTS FROM A CERTAIN TABLE WHERE THE ID IS EQUAL TO THE ID REQUESTED
-		const query = `SELECT * FROM faqs WHERE projectid = ? `
-		// STORE THE VALUE FROM THAT OBJECT TO AN ARRAY
-		const values = [id]
-
 		const error_messages = []
-
 		if (error){
 			error_messages.push("Internal server error!")
 		}
-
-		// (RUNS THE SQL QUERY AND RETURNS ALL DATABASE OBJECT RESULT ROWA) 
-		db.all(query, values, function(error, faqs) {
-
+		db.get_faqs_by_project_id(id, function(error, faqs){
 			if (error){
 				error_messages.push("Internal server error!")
 			}
-
 			const model = {
 				project,
 				faqs,
-				error_messages
+				error_messages 
 			}
-
 			res.render("project_faq.hbs", model)
-
 		})
 	})
-	
 })
 
-// DISPLAYS A SINGLE PROJECT PICTURES PAGE
+// DISPLAYS A SINGLE PROJECT PICTURES PAGE (ADDED IN THE DB.JS)
 app.get("/projects/:id/project_picture", function(req, res){
 	// REQUESTS THE ID FROM AN OBJECT CONTAINING PROPERTIES MAPPED TO THE NAMED ROUTE “parameters” (GETS THE ID VALUE FROM A URL LIKE "/projects/:id")
 	const id = req.params.id
-	// THIS QUERY SELECTS FROM A CERTAIN TABLE WHERE THE ID IS EQUAL TO THE ID REQUESTED
-	const query = `SELECT * FROM projects WHERE id = ? `
-	// STORE THE VALUE FROM THAT OBJECT TO AN ARRAY
-	const values = [id]
-
-	db.get(query, values, function(error, project) {
-		// REQUESTS THE ID FROM AN OBJECT CONTAINING PROPERTIES MAPPED TO THE NAMED ROUTE “parameters” (GETS THE ID VALUE FROM A URL LIKE "/projects/:id")
+	db.get_project_by_id(id, function(error, project) {
 		const id = req.params.id
-		// THIS QUERY SELECTS FROM A CERTAIN TABLE WHERE THE ID IS EQUAL TO THE ID REQUESTED
-		const query = `SELECT * FROM pictures WHERE projectid = ? `
-		// STORE THE VALUE FROM THAT OBJECT TO AN ARRAY
-		const values = [id]
-
 		const error_messages = []
-
 		if (error){
 			error_messages.push("Internal server error!")
 		}
-
-		// (RUNS THE SQL QUERY AND RETURNS ALL DATABASE OBJECT RESULT ROWA) 
-		db.all(query, values, function(error, pictures) {
-
+		db.get_pictures_by_project_id(id, function(error, pictures){
 			if (error){
 				error_messages.push("Internal server error!")
 			}
-
 			const model = {
 				project,
 				pictures,
-				error_messages
+				error_messages 
 			}
-
 			res.render("project_picture.hbs", model)
-
 		})
 	})
-	
 })
 
 // LOGIN PAGE (only the admin can enter the correct values)
@@ -343,19 +218,17 @@ app.post("/login", function (req, res){
 	// STORES THE KEY-VALUE PAIRS OF DATA (USERNAME, PASSWORD) SUBMITTED IN THE REQUEST BODY IN A VARIABLE
 	const username = req.body.username
 	const password = req.body.password
-
+	const correct_password = bcrypt.compareSync(password, admin_password_hash)
 	// CHECKS IF THE USER INPUTES THE CORRECT USERNAME AND PASSWORD
-	if (username == admin_username && password == admin_password){
+	if (username == admin_username && correct_password == true){
 		// SETS THE LOGIN SESSION TO TRUE
 		req.session.isLoggedIn = true
-
 		res.redirect("/dashboard")
 	} else{
 		const model = {
 			// STORES THE LOGIN SESSION STATUS TO FALSE IN A VARIABLE
 			failed_to_login: true
 		}
-
 		res.render("login.hbs", model)
 	}
 })
@@ -363,10 +236,8 @@ app.post("/login", function (req, res){
 // LOGOUT GET REQUEST
 app.get("/logout", function (req, res){
 	req.session.isLoggedIn = false
-
 	res.redirect("/")
 })
-
 
 /*
 	THE ADMIN SIDE PAGES
@@ -379,7 +250,7 @@ app.get("/dashboard", function(req, res){
 	res.render("dashboard.hbs", {layout: "admin.hbs"})
 })
 
-// projects add page
+// projects add page (ADDED IN THE DB.JS)
 app.get("/admin_projects", function(req, res){
 	res.render("admin_projects.hbs", {layout: "admin.hbs"})
 })
@@ -389,14 +260,11 @@ app.post("/projects/add", function(req, res){
 	const project_name = req.body.project_name
 	const project_sub_headline = req.body.project_sub_headline
 	const project_description = req.body.project_description
-
 	const error_messages = []
-
 	// CONDITIONS AGAINST HACKERS
 	if(!req.session.isLoggedIn){
 		error_messages.push("You have to login!")
 	}
-
 	// CONDITIONS FOR THE PROJECT NAME
 	if (project_name == "") {
 		error_messages.push("Project name should not be empty")
@@ -407,7 +275,6 @@ app.post("/projects/add", function(req, res){
 	} else if (numbers_regex.test(project_name)) {
 		error_messages.push("Project name should not consist of numbers only")
 	}
-
 	// CONDITIONS FOR THE PROJECT SUB-HEADLINE
 	if (project_sub_headline == "") {
 		error_messages.push("Project sub-headline should not be empty")
@@ -418,7 +285,6 @@ app.post("/projects/add", function(req, res){
 	} else if (numbers_regex.test(project_sub_headline)) {
 		error_messages.push("Project sub-headline should not consist of numbers only")
 	}
-
 	// CONDITIONS FOR THE PROJECT DESCRIPTION
 	if (project_description == "") {
 		error_messages.push("Project description should not be empty")
@@ -429,18 +295,9 @@ app.post("/projects/add", function(req, res){
 	} else if (numbers_regex.test(project_description)) {
 		error_messages.push("Project description should not consist of numbers only")
 	}
-
 	if (error_messages.length == 0){
-		// THIS QUERY INSERTS VALUES FETCHED FROM THE WEB APPLICATION INTO THE SPECIFIED TABLE
-		const query = `
-		INSERT INTO projects (project_name, project_sub_headline, project_description) VALUES (?, ?, ?)
-		`
-		// STORES THE FETCHED VALUES INTO AN ARRAY
-		const values = [project_name, project_sub_headline, project_description]
-
-		db.run(query, values, function(error){
+		db.add_project(project_name, project_sub_headline, project_description, function(error){
 			if (error){
-
 				error_messages.push("Internal server error!")
 	
 				const model = {
@@ -450,7 +307,6 @@ app.post("/projects/add", function(req, res){
 					error_messages,
 					layout: "admin.hbs"
 				}
-	
 				res.render("admin_projects.hbs", model)
 			} else{
 				res.redirect("/projects_edit")
@@ -464,13 +320,11 @@ app.post("/projects/add", function(req, res){
 			error_messages,
 			layout: "admin.hbs"
 		}
-
 		res.render("admin_projects.hbs", model)
 	}
-	
 })
 
-// blog add page
+// blog add page (ADDED IN THE DB.JS)
 app.get("/admin_blog", function(req, res){
 	res.render("admin_blog.hbs", {layout: "admin.hbs"})
 })
@@ -480,14 +334,11 @@ app.post("/blogs/add", function(req, res){
 	const post_text = req.body.post_text
 	const post_date = req.body.post_date
 	const projectid = req.body.projectid
-
 	const error_messages = []
-
 	// CONDITIONS AGAINST HACKERS
 	if(!req.session.isLoggedIn){
 		error_messages.push("You have to login!")
 	}
-
 	// CONDITIONS FOR POST TITLE
 	if (post_title == "") {
 		error_messages.push("Post title should not be empty")
@@ -498,7 +349,6 @@ app.post("/blogs/add", function(req, res){
 	} else if (numbers_regex.test(post_title)) {
 		error_messages.push("Post title should not consist of numbers only")
 	}
-
 	// CONDITIONS FOR POST TEXT
 	if (post_text == "") {
 		error_messages.push("Post text should not be empty")
@@ -509,14 +359,12 @@ app.post("/blogs/add", function(req, res){
 	} else if (numbers_regex.test(post_text)) {
 		error_messages.push("Post text should not consist of numbers only")
 	}
-
 	// CONDITIONS FOR POST DATE
 	if (post_date == "") {
 		error_messages.push("Post date should not be empty")
 	} else if (!(date_regex.test(post_date))) {
 		error_messages.push("Wrong date format")
 	}
-
 	// CONDITIONS FOR PROJECT ID
 	if (projectid == "") {
 		error_messages.push("Project id should not be empty")
@@ -525,19 +373,10 @@ app.post("/blogs/add", function(req, res){
 	} else if (isNaN(projectid)) {
 		error_messages.push("Project Id should be a number")
 	}
-
 	if (error_messages.length == 0) {
-
-		const query = `
-			INSERT INTO blogs (post_title, post_text, post_date, projectid) VALUES (?, ?, ?, ?)
-		`
-		const values = [post_title, post_text, post_date, projectid]
-
-		db.run(query, values, function(error){
+		db.add_blog(post_title, post_text, post_date, projectid, function(error){
 			if (error){
-				console.log(error)
 				error_messages.push("Internal server error!")
-
 				const model = {
 					post_title,
 					post_text,
@@ -546,13 +385,11 @@ app.post("/blogs/add", function(req, res){
 					error_messages,
 					layout: "admin.hbs"
 				}
-
 				res.render("admin_blog.hbs", model)
 			} else{
-				res.redirect("/admin_blog")
+				res.redirect("/blog_edit")
 			}
 		})
-
 	} else{
 		const model = {
 			post_title,
@@ -562,14 +399,11 @@ app.post("/blogs/add", function(req, res){
 			error_messages,
 			layout: "admin.hbs"
 		}
-
 		res.render("admin_blog.hbs", model)
 	}
-
-
 })
 
-// faq add page
+// faq add page (ADDED IN THE DB.JS)
 app.get("/admin_faq", function(req, res){
 	res.render("admin_faq.hbs", {layout: "admin.hbs"})
 })
@@ -579,14 +413,11 @@ app.post("/faqs/add", function(req, res){
 	const post_answer = req.body.post_answer
 	const post_date = req.body.post_date
 	const projectid = req.body.projectid
-
 	const error_messages = []
-
 	// CONDITIONS AGAINST HACKERS
 	if(!req.session.isLoggedIn){
 		error_messages.push("You have to login!")
 	}
-
 	// CONDITIONS FOR THE POST QUESTION
 	if (post_question == "") {
 		error_messages.push("Post question should not be empty")
@@ -597,7 +428,6 @@ app.post("/faqs/add", function(req, res){
 	} else if (numbers_regex.test(post_question)) {
 		error_messages.push("Post question should not consist of numbers only")
 	}
-
 	// CONDITIONS FOR THE POST ANSWER
 	if (post_answer == "") {
 		error_messages.push("Post answer should not be empty")
@@ -608,14 +438,12 @@ app.post("/faqs/add", function(req, res){
 	} else if (numbers_regex.test(post_answer)) {
 		error_messages.push("Post answer should not consist of numbers only")
 	}
-
 	// CONDITIONS FOR THE POST DATE
 	if (post_date == "") {
 		error_messages.push("Post date should not be empty")
 	} else if (!(date_regex.test(post_date))) {
 		error_messages.push("Wrong date format")
 	}
-
 	// CONDITIONS FOR THE PROJECT ID
 	if (projectid == "") {
 		error_messages.push("Project id should not be empty")
@@ -624,17 +452,10 @@ app.post("/faqs/add", function(req, res){
 	} else if (isNaN(projectid)) {
 		error_messages.push("Project Id should be a number")
 	}
-
 	if (error_messages.length == 0) {
-		const query = `
-			INSERT INTO faqs (post_question, post_answer, post_date, projectid) VALUES (?, ?, ?, ?)
-		`
-		const values = [post_question, post_answer, post_date, projectid]
-
-		db.run(query, values, function(error){
+		db.add_faq(post_question, post_answer, post_date, projectid, function(error){
 			if (error){
 				error_messages.push("Internal server error!")
-
 				const model = {
 					post_question,
 					post_answer,
@@ -643,10 +464,9 @@ app.post("/faqs/add", function(req, res){
 					error_messages,
 					layout: "admin.hbs"
 				}
-
 				res.render("admin_faq.hbs", model)
 			} else{
-				res.redirect("/admin_faq")
+				res.redirect("/faq_edit")
 			}
 		})
 	} else{
@@ -658,14 +478,11 @@ app.post("/faqs/add", function(req, res){
 			error_messages,
 			layout: "admin.hbs"
 		}
-
 		res.render("admin_faq.hbs", model)
 	}
-
-	
 })
 
-// pictures add page
+// pictures add page (ADDED IN THE DB.JS)
 app.get("/admin_pictures", function(req, res){
 	res.render("admin_pictures.hbs", {layout: "admin.hbs"})
 })
@@ -674,26 +491,21 @@ app.post("/pictures/add", upload.single('picture_name'), function(req, res){
 	const projectid = req.body.projectid
 	const picture_title = req.body.picture_title
 	const picture_name = req.file.originalname
-
 	const error_messages = []
-
 	// CONDITIONS AGAINST HACKERS
 	if(!req.session.isLoggedIn){
 		error_messages.push("You have to login!")
 	}
-
 	// CONDITIONS FOR PICTURE NAME
 	if(picture_name == undefined) {
 		error_messages.push("Project picture name should not be empty")
 	}
-
 	// CONDITIONS FOR THE PROJECT ID
 	if (projectid == "") {
 		error_messages.push("Project id should not be empty")
 	} else if (projectid < min_project_id_number) {
 		error_messages.push("Project id should not be less than " + min_project_id_number)
 	}
-
 	// CONDITIONS FOR THE PROJECT PICTURE
 	if (picture_title == "") {
 		error_messages.push("Picture title should not be empty")
@@ -704,15 +516,9 @@ app.post("/pictures/add", upload.single('picture_name'), function(req, res){
 	}
 	console.log(error_messages)
 	if (error_messages.length == 0) {
-		const query = `
-			INSERT INTO pictures (picture_title, picture_name, projectid) VALUES (?, ?, ?)
-		`
-		const values = [picture_title, picture_name, projectid]
-
-		db.run(query, values, function(error){
+		db.add_picture(picture_title, picture_name, projectid, function(error){
 			if (error){
 				error_messages.push("Internal server error!")
-
 				const model = {
 					picture_title,
 					picture_name,
@@ -720,10 +526,9 @@ app.post("/pictures/add", upload.single('picture_name'), function(req, res){
 					error_messages,
 					layout: "admin.hbs"
 				}
-
 				res.render("admin_pictures.hbs", model)
 			} else{
-				res.redirect("/admin_pictures")
+				res.redirect("/picture_edit")
 			}
 		})
 	}else{
@@ -734,57 +539,42 @@ app.post("/pictures/add", upload.single('picture_name'), function(req, res){
 			error_messages,
 			layout: "admin.hbs"
 		}
-
 		res.render("admin_pictures.hbs", model)
 	}
-
 })
 
 //INSIDE THE MAIN ADMIN PAGES
 
-//projects (edit, remove, edit projects table search)
+//projects (edit, remove, edit projects table search) (ADDED IN THE DB.JS)
 app.get("/projects_edit", function(req, res){
-
-	const query = `SELECT * FROM projects`
-
-	db.all(query, function(error, projects) {
-
+	db.get_all_projects(function(error, projects) {
 		const access_error_messages = []
-
 		// CONDITIONS AGAINST HACKERS
 		if(!req.session.isLoggedIn){
 			access_error_messages.push("You have to login!")
 		}
-
 		if (error){
 			access_error_messages.push("Internal server error!")
 		}
-
 		const model = {
 			projects,
 			access_error_messages,
 			layout: "admin.hbs"
 		}
-
 		res.render("projects_edit.hbs", model)
-	}) 
-
+	})
 })
 
 app.post("/projects/edit/:id", function(req, res){
 	const id = req.params.id
-	const editable_project_id = req.body.editable_project_id
 	const project_name = req.body.project_name
 	const project_sub_headline = req.body.project_sub_headline
 	const project_description = req.body.project_description
-
 	const error_messages = []
-
 	// CONDITIONS AGAINST HACKERS
 	if(!req.session.isLoggedIn){
 		error_messages.push("You have to login!")
 	}
-
 	// CONDITIONS FOR THE PROJECT NAME
 	if (project_name == "") {
 		error_messages.push("Project name should not be empty")
@@ -795,7 +585,6 @@ app.post("/projects/edit/:id", function(req, res){
 	} else if (numbers_regex.test(project_name)) {
 		error_messages.push("Project name should not consist of numbers only")
 	}
-
 	// CONDITIONS FOR THE PROJECT SUB-HEADLINE
 	if (project_sub_headline == "") {
 		error_messages.push("Project sub-headline should not be empty")
@@ -806,7 +595,6 @@ app.post("/projects/edit/:id", function(req, res){
 	} else if (numbers_regex.test(project_sub_headline)) {
 		error_messages.push("Project sub-headline should not consist of numbers only")
 	}
-
 	// CONDITIONS FOR THE PROJECT DESCRIPTION
 	if (project_description == "") {
 		error_messages.push("Project description should not be empty")
@@ -817,255 +605,165 @@ app.post("/projects/edit/:id", function(req, res){
 	} else if (numbers_regex.test(project_description)) {
 		error_messages.push("Project description should not consist of numbers only")
 	}
-
-	// CONDITIONS FOR THE PROJECT DESCRIPTION
-	if (editable_project_id == "") {
-		error_messages.push("Project Id should not be empty")
-	} else if (isNaN(editable_project_id)) {
-		error_messages.push("Project Id should be a number")
-	} else if (editable_project_id < min_project_id_number) {
-		error_messages.push("Project id should not be less than " + min_project_id_number)
-	}
-
-
 	if (error_messages.length == 0) {
-
-		const query = `
-			UPDATE projects SET project_name = ?, project_sub_headline = ?, project_description = ?, id = ? WHERE id = ?
-		`
-
-		const values = [project_name, project_sub_headline, project_description, editable_project_id, id]
-
-		db.run(query, values, function(error) {
+		db.edit_project(project_name, project_sub_headline, project_description, id, function(error){
 			if(error) {
 				error_messages.push("Internal server error!")
-
 				const model = {
 					id,
 					project_name,
 					project_sub_headline,
 					project_description,
-					editable_project_id,
 					error_messages,
 					layout: "admin.hbs"
 				}
-
 				res.render("projects_edit.hbs", model)
 			} else {
 				res.redirect("/projects_edit")
 			}
-	
 		})
 	} else{
-
-		const query = `SELECT * FROM projects`
-
-		db.all(query, function(error, projects) {
-
+		db.get_all_projects(function(error, projects) {
 			// CONDITIONS AGAINST HACKERS
 			if(!req.session.isLoggedIn){
 				error_messages.push("You have to login!")
 			}
-
 			if (error){
 				error_messages.push("Internal server error!")
 			}
-
 			const model = {
 				projects,
 				error_messages,
 				layout: "admin.hbs"
 			}
-
 			res.render("projects_edit.hbs", model)
-		}) 
-
+		})
 	}
-
 })
 
 app.get("/projects_remove", function(req, res){
-	const query = `SELECT * FROM projects`
-
-	db.all(query, function(error, projects) {
+	db.get_all_projects(function(error, projects) {
 		const access_error_messages = []
-
 		// CONDITIONS AGAINST HACKERS
 		if(!req.session.isLoggedIn){
 			access_error_messages.push("You have to login!")
 		}
-
 		if (error){
 			access_error_messages.push("Internal server error!")
 		}
-
 		const model = {
 			projects,
 			access_error_messages,
 			layout: "admin.hbs"
 		}
-
 		res.render("projects_remove.hbs", model)
-	}) 
+	})
 })
 
 app.post("/projects/remove/:id", function(req, res){
 	const id = req.params.id
-
 	const error_messages = []
-
 	// CONDITIONS AGAINST HACKERS
 	if(!req.session.isLoggedIn){
 		error_messages.push("You have to login!")
 	}
-
 	if (error_messages.length == 0) {
-
-		const query = `
-			DELETE FROM projects WHERE id = ?
-		`
-	
-		const values = [id]
-	
-		db.run(query, values, function(error) {
+		db.remove_project(id, function(error){
 			if(error) {
 				error_messages.push("Internal server error!")
-
 				const model = {
 					id,
 					error_messages,
 					layout: "admin.hbs"
 				}
-
 				res.render("projects_remove.hbs", model)
 			} else {
 				res.redirect("/projects_remove")
 			}
-	
 		})
 	} else{
-		const query = `SELECT * FROM projects`
-
-		db.all(query, function(error, projects) {
-	
+		const model = {
+			id,
+			error_messages,
+			layout: "admin.hbs"
+		}
+		res.render("projects_remove.hbs", model)
+	}
+})
+// PROJECTS TABLE SEARCH FUNCTION (ADDED IN THE DB.JS)
+app.get("/projects_edit_search", function(req, res){
+	const searched_value = req.query.project_table_search
+	const search_error_messages = []
+	// CONDITIONS AGAINST HACKERS
+	if(!req.session.isLoggedIn){
+		search_error_messages.push("You have to login!")
+	}
+	if(searched_value.length == 0) {
+		search_error_messages.push("You have to enter a value")
+	} else if (searched_value.trim() == "") {
+		search_error_messages.push("You have to enter a value (not only spaces)")
+	} else if (searched_value === null) {
+		search_error_messages.push("The value does not exist")
+	}
+	if (search_error_messages.length == 0 && searched_value !== null) {
+		db.search_projects(searched_value, function(error, projects){
+			if (error){
+				search_error_messages.push("Internal server error (related to the search function)!")
+				const model = {
+					searched_value,
+					search_error_messages,
+					projects,
+					layout: "admin.hbs"
+				}
+				res.render("projects_edit.hbs", model)
+			} else{
+				const model = {
+					searched_value,
+					search_error_messages,
+					projects,
+					layout: "admin.hbs"
+				}
+				res.render("projects_edit.hbs", model)
+			}
+		})
+	} else{
+		db.get_all_projects(function(error, projects) {
+			const error_messages = []
 			// CONDITIONS AGAINST HACKERS
 			if(!req.session.isLoggedIn){
 				error_messages.push("You have to login!")
 			}
-	
 			if (error){
 				error_messages.push("Internal server error!")
 			}
-	
 			const model = {
 				projects,
 				error_messages,
 				layout: "admin.hbs"
 			}
-	
-			res.render("projects_remove.hbs", model)
-		}) 
-	}
-
-})
-// PROJECTS TABLE SEARCH FUNCTION
-app.get("/projects_edit_search", function(req, res){
-	const searched_value = req.query.project_table_search
-
-	const search_error_messages = []
-
-	// CONDITIONS AGAINST HACKERS
-	if(!req.session.isLoggedIn){
-		search_error_messages.push("You have to login!")
-	}
-
-	if(searched_value.length == 0) {
-		search_error_messages.push("You have to enter a value")
-	} else if (searched_value.trim() == "") {
-		search_error_messages.push("You have to enter a value (not only spaces)")
-	}
-
-	if (search_error_messages.length == 0 && searched_value) {
-		// THIS QUERY INSERTS VALUES FETCHED FROM THE WEB APPLICATION INTO THE SPECIFIED TABLE
-		const query = `
-		SELECT * FROM projects WHERE id LIKE ? OR project_name LIKE ? OR project_sub_headline LIKE ? OR project_description LIKE ?
-		`
-		const values = ["%" + searched_value + "%", "%" + searched_value + "%", "%" + searched_value + "%", "%" + searched_value + "%"]
-
-		db.all(query, values, function(error, projects){
-			if (error){
-				search_error_messages.push("Internal server error (related to the search function)!")
-
-				const model = {
-					searched_value,
-					search_error_messages,
-					projects,
-					layout: "admin.hbs"
-				}
-
-				res.render("projects_edit.hbs", model)
-			} else{
-
-				const model = {
-					searched_value,
-					search_error_messages,
-					projects,
-					layout: "admin.hbs"
-				}
-				res.render("projects_edit.hbs", model)
-			}
-		})
-	} else{
-		const query = `SELECT * FROM projects`
-
-		db.all(query, function(error, projects) {
-	
-			// CONDITIONS AGAINST HACKERS
-			if(!req.session.isLoggedIn){
-				search_error_messages.push("You have to login!")
-			}
-	
-			if (error){
-				search_error_messages.push("Internal server error!")
-			}
-	
-			const model = {
-				projects,
-				search_error_messages,
-				layout: "admin.hbs"
-			}
-	
 			res.render("projects_edit.hbs", model)
-		}) 
+		})
 	}
-
 })
 
-//blog (edit, remove, edit blogs table search)
+//blog (edit, remove, edit blogs table search) (ADDED IN THE DB.JS)
 app.get("/blog_edit", function(req, res){
-	
-	const query = `SELECT * FROM blogs`
-
-	db.all(query, function(error, blogs) {
+	db.get_all_blogs(function(error, blogs) {
 		const access_error_messages = []
-
 		// CONDITIONS AGAINST HACKERS
 		if(!req.session.isLoggedIn){
 			access_error_messages.push("You have to login!")
 		}
-
 		if (error){
 			access_error_messages.push("Internal server error!")
 		}
-
 		const model = {
 			blogs,
 			access_error_messages,
 			layout: "admin.hbs"
 		}
-
 		res.render("blog_edit.hbs", model)
-	}) 
+	})
 })
 
 app.post("/blogs/edit/:id", function(req, res){
@@ -1074,14 +772,11 @@ app.post("/blogs/edit/:id", function(req, res){
 	const post_text = req.body.post_text
 	const post_date = req.body.post_date
 	const projectid = req.body.projectid
-
 	const error_messages = []
-
 	// CONDITIONS AGAINST HACKERS
 	if(!req.session.isLoggedIn){
 		error_messages.push("You have to login!")
 	}
-
 	// CONDITIONS FOR POST TITLE
 	if (post_title == "") {
 		error_messages.push("Post title should not be empty")
@@ -1092,7 +787,6 @@ app.post("/blogs/edit/:id", function(req, res){
 	} else if (numbers_regex.test(post_title)) {
 		error_messages.push("Post title should not consist of numbers only")
 	}
-
 	// CONDITIONS FOR POST TEXT
 	if (post_text == "") {
 		error_messages.push("Post text should not be empty")
@@ -1103,14 +797,12 @@ app.post("/blogs/edit/:id", function(req, res){
 	} else if (numbers_regex.test(post_text)) {
 		error_messages.push("Post text should not consist of numbers only")
 	}
-
 	// CONDITIONS FOR POST DATE
 	if (post_date == "") {
 		error_messages.push("Post date should not be empty")
 	} else if (!(date_regex.test(post_date))) {
 		error_messages.push("Wrong date format")
 	}
-
 	// CONDITIONS FOR PROJECT ID
 	if (projectid == "") {
 		error_messages.push("Project id should not be empty")
@@ -1119,19 +811,10 @@ app.post("/blogs/edit/:id", function(req, res){
 	} else if (isNaN(projectid)) {
 		error_messages.push("Project Id should be a number")
 	}
-
 	if (error_messages.length == 0) {
-
-		const query = `
-			UPDATE blogs SET post_title = ?, post_text = ?, post_date = ?, projectid = ? WHERE id = ?
-		`
-
-		const values = [post_title, post_text, post_date, projectid, id]
-
-		db.run(query, values, function(error) {
+		db.edit_blog(post_title, post_text, post_date, projectid, id, function(error){
 			if(error) {
 				error_messages.push("Internal server error!")
-
 				const model = {
 					id,
 					post_title,
@@ -1141,98 +824,69 @@ app.post("/blogs/edit/:id", function(req, res){
 					error_messages,
 					layout: "admin.hbs"
 				}
-
 				res.render("blog_edit.hbs", model)
 			} else {
 				res.redirect("/blog_edit")
 			}
-
 		})
-
 	} else{
-		const query = `SELECT * FROM blogs`
-
-		db.all(query, function(error, blogs) {
-	
+		db.get_all_blogs(function(error, blogs) {
 			// CONDITIONS AGAINST HACKERS
 			if(!req.session.isLoggedIn){
 				error_messages.push("You have to login!")
 			}
-	
 			if (error){
 				error_messages.push("Internal server error!")
 			}
-	
 			const model = {
 				blogs,
 				error_messages,
 				layout: "admin.hbs"
 			}
-	
 			res.render("blog_edit.hbs", model)
 		})
 	}
-
 })
 
 app.get("/blog_remove", function(req, res){
-	const query = `SELECT * FROM blogs`
-
-	db.all(query, function(error, blogs) {
+	db.get_all_blogs(function(error, blogs) {
 		const access_error_messages = []
-
 		// CONDITIONS AGAINST HACKERS
 		if(!req.session.isLoggedIn){
 			access_error_messages.push("You have to login!")
 		}
-
 		if (error){
 			access_error_messages.push("Internal server error!")
 		}
-
 		const model = {
 			blogs,
 			access_error_messages,
 			layout: "admin.hbs"
 		}
-
 		res.render("blog_remove.hbs", model)
-	}) 
+	})
 })
 
 app.post("/blogs/remove/:id", function(req, res){
 	const id = req.params.id
-
 	const error_messages = []
-
 	// CONDITIONS AGAINST HACKERS
 	if(!req.session.isLoggedIn){
 		error_messages.push("You have to login!")
 	}
-
 	if (error_messages.length == 0) {
-
-		const query = `
-			DELETE FROM blogs WHERE id = ?
-		`
-	
-		const values = [id]
-	
-		db.run(query, values, function(error) {
+		db.remove_blog(id, function(error){
 			if(error) {
 				error_messages.push("Internal server error!")
-
 				const model = {
 					id,
 					error_messages,
 					layout: "admin.hbs"
 				}
-
 				res.render("blog_remove.hbs", model)
 			} else {
 				res.redirect("/blog_remove")
 			}
-	
 		})
 	} else{
 		const model = {
@@ -1240,48 +894,34 @@ app.post("/blogs/remove/:id", function(req, res){
 			error_messages,
 			layout: "admin.hbs"
 		}
-
 		res.render("blog_remove.hbs", model)
 	}
 })
-// BLOGS TABLE EDIT SEARCH FUNCTION
+// BLOGS TABLE EDIT SEARCH FUNCTION (ADDED IN THE DB.JS)
 app.get("/blog_edit_search", function(req, res){
 	const searched_value = req.query.blog_table_search
-
 	const search_error_messages = []
-
 	// CONDITIONS AGAINST HACKERS
 	if(!req.session.isLoggedIn){
 		search_error_messages.push("You have to login!")
 	}
-
 	if(searched_value.length == 0) {
 		search_error_messages.push("You have to enter a value")
 	} else if (searched_value.trim() == "") {
 		search_error_messages.push("You have to enter a value (not only spaces)")
 	}
-
 	if (search_error_messages.length == 0 && searched_value) {
-		// THIS QUERY INSERTS VALUES FETCHED FROM THE WEB APPLICATION INTO THE SPECIFIED TABLE
-		const query = `
-		SELECT * FROM blogs WHERE post_title LIKE ? OR post_text LIKE ? OR post_date LIKE ? OR projectid LIKE ?
-		`
-		const values = ["%" + searched_value + "%", "%" + searched_value + "%", "%" + searched_value + "%", "%" + searched_value + "%"]
-
-		db.all(query, values, function(error, blogs){
+		db.search_blogs(searched_value, function(error, blogs){
 			if (error){
 				search_error_messages.push("Internal server error (related to the search function)!")
-
 				const model = {
 					searched_value,
 					search_error_messages,
 					blogs,
 					layout: "admin.hbs"
 				}
-
 				res.render("blog_edit.hbs", model)
 			} else{
-
 				const model = {
 					searched_value,
 					search_error_messages,
@@ -1292,56 +932,42 @@ app.get("/blog_edit_search", function(req, res){
 			}
 		})
 	} else{
-		const query = `SELECT * FROM blogs`
-
-		db.all(query, function(error, blogs) {
-
+		db.get_all_blogs(function(error, blogs) {
 			// CONDITIONS AGAINST HACKERS
 			if(!req.session.isLoggedIn){
 				search_error_messages.push("You have to login!")
 			}
-
 			if (error){
 				search_error_messages.push("Internal server error!")
 			}
-
 			const model = {
 				blogs,
 				search_error_messages,
 				layout: "admin.hbs"
 			}
-
 			res.render("blog_edit.hbs", model)
-		}) 
+		})
 	}
-
 })
 
-//faq (edit, remove, edit faq table search)
+//faq (edit, remove, edit faq table search) (ADDED IN THE DB.JS)
 app.get("/faq_edit", function(req, res){
-		
-	const query = `SELECT * FROM faqs`
-
-	db.all(query, function(error, faqs) {
+	db.get_all_faqs(function(error, faqs) {
 		const access_error_messages = []
-
 		// CONDITIONS AGAINST HACKERS
 		if(!req.session.isLoggedIn){
 			access_error_messages.push("You have to login!")
 		}
-
 		if (error){
 			access_error_messages.push("Internal server error!")
 		}
-
 		const model = {
 			faqs,
 			access_error_messages,
 			layout: "admin.hbs"
 		}
-
 		res.render("faq_edit.hbs", model)
-	}) 
+	})
 })
 
 app.post("/faqs/edit/:id", function(req, res){
@@ -1350,14 +976,11 @@ app.post("/faqs/edit/:id", function(req, res){
 	const post_answer = req.body.post_answer
 	const post_date = req.body.post_date
 	const projectid = req.body.projectid
-
 	const error_messages = []
-
 	// CONDITIONS AGAINST HACKERS
 	if(!req.session.isLoggedIn){
 		error_messages.push("You have to login!")
 	}
-
 	// CONDITIONS FOR THE POST QUESTION
 	if (post_question == "") {
 		error_messages.push("Post question should not be empty")
@@ -1368,7 +991,6 @@ app.post("/faqs/edit/:id", function(req, res){
 	} else if (numbers_regex.test(post_question)) {
 		error_messages.push("Post question should not consist of numbers only")
 	}
-
 	// CONDITIONS FOR THE POST ANSWER
 	if (post_answer == "") {
 		error_messages.push("Post answer should not be empty")
@@ -1379,14 +1001,12 @@ app.post("/faqs/edit/:id", function(req, res){
 	} else if (numbers_regex.test(post_answer)) {
 		error_messages.push("Post answer should not consist of numbers only")
 	}
-
 	// CONDITIONS FOR THE POST DATE
 	if (post_date == "") {
 		error_messages.push("Post date should not be empty")
 	} else if (!(date_regex.test(post_date))) {
 		error_messages.push("Wrong date format")
 	}
-
 	// CONDITIONS FOR THE PROJECT ID
 	if (projectid == "") {
 		error_messages.push("Project id should not be empty")
@@ -1395,18 +1015,10 @@ app.post("/faqs/edit/:id", function(req, res){
 	} else if (isNaN(projectid)) {
 		error_messages.push("Project Id should be a number")
 	}
-
 	if (error_messages.length == 0) {
-		const query = `
-			UPDATE faqs SET post_question = ?, post_answer = ?, post_date = ?, projectid = ? WHERE id = ?
-		`
-	
-		const values = [post_question, post_answer, post_date, projectid, id]
-	
-		db.run(query, values, function(error) {
+		db.edit_faq(post_question, post_answer, post_date, projectid, id, function(error){
 			if(error) {
 				error_messages.push("Internal server error!")
-
 				const model = {
 					id,
 					post_question,
@@ -1416,98 +1028,69 @@ app.post("/faqs/edit/:id", function(req, res){
 					error_messages,
 					layout: "admin.hbs"
 				}
-
 				res.render("faq_edit.hbs", model)
 			} else {
 				res.redirect("/faq_edit")
 			}
-	
 		})
-
 	} else{
-				
-	const query = `SELECT * FROM faqs`
-
-	db.all(query, function(error, faqs) {
-
-		// CONDITIONS AGAINST HACKERS
-		if(!req.session.isLoggedIn){
-			error_messages.push("You have to login!")
-		}
-
-		if (error){
-			error_messages.push("Internal server error!")
-		}
-
-		const model = {
-			faqs,
-			error_messages,
-			layout: "admin.hbs"
-		}
-
-		res.render("faq_edit.hbs", model)
-	}) 
+		db.get_all_faqs(function(error, faqs) {
+			// CONDITIONS AGAINST HACKERS
+			if(!req.session.isLoggedIn){
+				error_messages.push("You have to login!")
+			}
+			if (error){
+				error_messages.push("Internal server error!")
+			}
+			const model = {
+				faqs,
+				error_messages,
+				layout: "admin.hbs"
+			}
+			res.render("faq_edit.hbs", model)
+		})
 	}
 })
 
 app.get("/faq_remove", function(req, res){
-	const query = `SELECT * FROM faqs`
-
-	db.all(query, function(error, faqs) {
+	db.get_all_faqs(function(error, faqs) {
 		const access_error_messages = []
-
 		// CONDITIONS AGAINST HACKERS
 		if(!req.session.isLoggedIn){
 			access_error_messages.push("You have to login!")
 		}
-
 		if (error){
 			access_error_messages.push("Internal server error!")
 		}
-
 		const model = {
 			faqs,
 			access_error_messages,
 			layout: "admin.hbs"
 		}
-
 		res.render("faq_remove.hbs", model)
-	}) 
+	})
 })
 
 app.post("/faqs/remove/:id", function(req, res){
 	const id = req.params.id
-
 	const error_messages = []
-
 	// CONDITIONS AGAINST HACKERS
 	if(!req.session.isLoggedIn){
 		error_messages.push("You have to login!")
 	}
-
 	if (error_messages.length == 0) {
-
-		const query = `
-			DELETE FROM faqs WHERE id = ?
-		`
-	
-		const values = [id]
-	
-		db.run(query, values, function(error) {
+		db.remove_faq(id, function(error){
 			if(error) {
 				error_messages.push("Internal server error!")
-
 				const model = {
 					id,
 					error_messages,
 					layout: "admin.hbs"
 				}
-
 				res.render("faq_remove.hbs", model)
 			} else {
 				res.redirect("/faq_remove")
 			}
-	
 		})
 	} else{
 		const model = {
@@ -1515,48 +1098,34 @@ app.post("/faqs/remove/:id", function(req, res){
 			error_messages,
 			layout: "admin.hbs"
 		}
-
 		res.render("faq_remove.hbs", model)
 	}
 })
-// FAQ TABLE EDIT SEARCH FUNCTION
+// FAQS TABLE EDIT SEARCH FUNCTION (ADDED IN THE DB.JS)
 app.get("/faq_edit_search", function(req, res){
 	const searched_value = req.query.faq_table_search
-
 	const search_error_messages = []
-
 	// CONDITIONS AGAINST HACKERS
 	if(!req.session.isLoggedIn){
 		search_error_messages.push("You have to login!")
 	}
-
 	if(searched_value.length == 0) {
 		search_error_messages.push("You have to enter a value")
 	} else if (searched_value.trim() == "") {
 		search_error_messages.push("You have to enter a value (not only spaces)")
 	}
-
 	if (search_error_messages.length == 0 && searched_value) {
-		// THIS QUERY INSERTS VALUES FETCHED FROM THE WEB APPLICATION INTO THE SPECIFIED TABLE
-		const query = `
-		SELECT * FROM faqs WHERE post_question LIKE ? OR post_answer LIKE ? OR post_date LIKE ? OR projectid LIKE ?
-		`
-		const values = ["%" + searched_value + "%", "%" + searched_value + "%", "%" + searched_value + "%", "%" + searched_value + "%"]
-
-		db.all(query, values, function(error, faqs){
+		db.search_faqs(searched_value, function(error, faqs){
 			if (error){
 				search_error_messages.push("Internal server error (related to the search function)!")
-
 				const model = {
 					searched_value,
 					search_error_messages,
 					faqs,
 					layout: "admin.hbs"
 				}
-
 				res.render("faq_edit.hbs", model)
 			} else{
-
 				const model = {
 					searched_value,
 					search_error_messages,
@@ -1567,56 +1136,42 @@ app.get("/faq_edit_search", function(req, res){
 			}
 		})
 	} else{
-		const query = `SELECT * FROM faqs`
-
-		db.all(query, function(error, faqs) {
-
+		db.get_all_faqs(function(error, faqs) {
 			// CONDITIONS AGAINST HACKERS
 			if(!req.session.isLoggedIn){
 				search_error_messages.push("You have to login!")
 			}
-
 			if (error){
 				search_error_messages.push("Internal server error!")
 			}
-
 			const model = {
 				faqs,
 				search_error_messages,
 				layout: "admin.hbs"
 			}
-
 			res.render("faq_edit.hbs", model)
-		}) 
+		})
 	}
-
 })
 
-//pictures (edit, remove)
+//pictures (edit, remove) (ADDED IN THE DB.JS)
 app.get("/picture_edit", function(req, res){
-	
-	const query = `SELECT * FROM pictures`
-
-	db.all(query, function(error, pictures) {
+	db.get_all_pictures(function(error, pictures) {
 		const access_error_messages = []
-
 		// CONDITIONS AGAINST HACKERS
 		if(!req.session.isLoggedIn){
 			access_error_messages.push("You have to login!")
 		}
-
 		if (error){
 			access_error_messages.push("Internal server error!")
 		}
-
 		const model = {
 			pictures,
 			access_error_messages,
 			layout: "admin.hbs"
 		}
-
 		res.render("picture_edit.hbs", model)
-	}) 
+	})
 })
 
 app.post("/pictures/edit/:id", upload.single('picture_name'), function(req, res){
@@ -1624,15 +1179,11 @@ app.post("/pictures/edit/:id", upload.single('picture_name'), function(req, res)
 	const picture_title = req.body.picture_title
 	const projectid = req.body.projectid
 	const picture_name = req.file.originalname
-
-
 	const error_messages = []
-
 	// CONDITIONS AGAINST HACKERS
 	if(!req.session.isLoggedIn){
 		error_messages.push("You have to login!")
 	}
-
 	// CONDITIONS FOR THE PROJECT ID
 	if (projectid == "") {
 		error_messages.push("Project id should not be empty")
@@ -1641,7 +1192,6 @@ app.post("/pictures/edit/:id", upload.single('picture_name'), function(req, res)
 	} else if (isNaN(projectid)) {
 		error_messages.push("Project Id should be a number")
 	}
-
 	// CONDITIONS FOR THE PROJECT PICTURE
 	if (picture_title == "") {
 		error_messages.push("Picture title should not be empty")
@@ -1652,18 +1202,13 @@ app.post("/pictures/edit/:id", upload.single('picture_name'), function(req, res)
 	} else if (numbers_regex.test(picture_title)) {
 		error_messages.push("Picture title should not consist of numbers only")
 	}
-
+	if(picture_name == undefined) {
+		error_messages.push("Picture name should not be empty")
+	}
 	if (error_messages.length == 0) {
-		const query = `
-			UPDATE pictures SET picture_title = ?, projectid = ?, picture_name = ? WHERE id = ?
-		`
-	
-		const values = [picture_title, projectid, picture_name, id]
-	
-		db.run(query, values, function(error) {
+		db.edit_picture(picture_title, projectid, picture_name, id, function(error){
 			if(error) {
 				error_messages.push("Internal server error!")
-
 				const model = {
 					id,
 					picture_title,
@@ -1672,97 +1217,69 @@ app.post("/pictures/edit/:id", upload.single('picture_name'), function(req, res)
 					error_messages,
 					layout: "admin.hbs"
 				}
-
 				res.render("picture_edit.hbs", model)
 			} else {
 				res.redirect("/picture_edit")
 			}
-	
 		})
-
 	} else{
-		const query = `SELECT * FROM pictures`
-
-		db.all(query, function(error, pictures) {
-	
+		db.get_all_pictures(function(error, pictures) {
 			// CONDITIONS AGAINST HACKERS
 			if(!req.session.isLoggedIn){
 				error_messages.push("You have to login!")
 			}
-	
 			if (error){
 				error_messages.push("Internal server error!")
 			}
-	
 			const model = {
 				pictures,
 				error_messages,
 				layout: "admin.hbs"
 			}
-	
 			res.render("picture_edit.hbs", model)
-		}) 
+		})
 	}
 })
 
 app.get("/picture_remove", function(req, res){
-	const query = `SELECT * FROM pictures`
-
-	db.all(query, function(error, pictures) {
+	db.get_all_pictures(function(error, pictures) {
 		const access_error_messages = []
-
 		// CONDITIONS AGAINST HACKERS
 		if(!req.session.isLoggedIn){
 			access_error_messages.push("You have to login!")
 		}
-
 		if (error){
 			access_error_messages.push("Internal server error!")
 		}
-
 		const model = {
 			pictures,
 			access_error_messages,
 			layout: "admin.hbs"
 		}
-
 		res.render("picture_remove.hbs", model)
-	}) 
+	})
 })
 
 app.post("/pictures/remove/:id", function(req, res){
 	const id = req.params.id
-
 	const error_messages = []
-
 	// CONDITIONS AGAINST HACKERS
 	if(!req.session.isLoggedIn){
 		error_messages.push("You have to login!")
 	}
-
 	if (error_messages.length == 0) {
-
-		const query = `
-			DELETE FROM pictures WHERE id = ?
-		`
-	
-		const values = [id]
-	
-		db.run(query, values, function(error) {
+		db.remove_picture(id, function(error){
 			if(error) {
 				error_messages.push("Internal server error!")
-
 				const model = {
 					id,
 					error_messages,
 					layout: "admin.hbs"
 				}
-
 				res.render("picture_remove.hbs", model)
 			} else {
 				res.redirect("/picture_remove")
 			}
-	
 		})
 	} else{
 		const model = {
@@ -1770,48 +1287,34 @@ app.post("/pictures/remove/:id", function(req, res){
 			error_messages,
 			layout: "admin.hbs"
 		}
-
 		res.render("picture_remove.hbs", model)
 	}
 })
-// FAQ TABLE EDIT SEARCH FUNCTION
+// PICTURES TABLE EDIT SEARCH FUNCTION (ADDED IN THE DB.JS)
 app.get("/picture_edit_search", function(req, res){
 	const searched_value = req.query.picture_table_search
-
 	const search_error_messages = []
-
 	// CONDITIONS AGAINST HACKERS
 	if(!req.session.isLoggedIn){
 		search_error_messages.push("You have to login!")
 	}
-
 	if(searched_value.length == 0) {
 		search_error_messages.push("You have to enter a value")
 	} else if (searched_value.trim() == "") {
 		search_error_messages.push("You have to enter a value (not only spaces)")
 	}
-
 	if (search_error_messages.length == 0 && searched_value) {
-		// THIS QUERY INSERTS VALUES FETCHED FROM THE WEB APPLICATION INTO THE SPECIFIED TABLE
-		const query = `
-		SELECT * FROM pictures WHERE picture_title LIKE ? OR picture_name LIKE ? OR projectid LIKE ?
-		`
-		const values = ["%" + searched_value + "%", "%" + searched_value + "%", "%" + searched_value + "%"]
-
-		db.all(query, values, function(error, pictures){
+		db.search_pictures(searched_value, function(error, pictures){
 			if (error){
 				search_error_messages.push("Internal server error (related to the search function)!")
-
 				const model = {
 					searched_value,
 					search_error_messages,
 					pictures,
 					layout: "admin.hbs"
 				}
-
-				res.render("picture_edit.hbs", model)
+				res.render("faq_edit.hbs", model)
 			} else{
-
 				const model = {
 					searched_value,
 					search_error_messages,
@@ -1822,29 +1325,22 @@ app.get("/picture_edit_search", function(req, res){
 			}
 		})
 	} else{
-		const query = `SELECT * FROM pictures`
-
-		db.all(query, function(error, pictures) {
-	
+		db.get_all_pictures(function(error, pictures) {
 			// CONDITIONS AGAINST HACKERS
 			if(!req.session.isLoggedIn){
 				search_error_messages.push("You have to login!")
 			}
-	
 			if (error){
 				search_error_messages.push("Internal server error!")
 			}
-	
 			const model = {
 				pictures,
 				search_error_messages,
 				layout: "admin.hbs"
 			}
-	
 			res.render("picture_edit.hbs", model)
 		})
 	}
-
 })
 
 // LISTENS TO THE CHOSEN PORT NUMBER
