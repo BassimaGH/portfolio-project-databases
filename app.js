@@ -490,16 +490,23 @@ app.get("/admin_pictures", function(req, res){
 app.post("/pictures/add", upload.single('picture_name'), function(req, res){
 	const projectid = req.body.projectid
 	const picture_title = req.body.picture_title
-	const picture_name = req.file.originalname
+	let picture_name
 	const error_messages = []
+	if(req.file) {
+		if(req.file.mimetype == "image/png" || req.file.mimetype == "image/jpg" || req.file.mimetype == "image/jpeg") {
+			picture_name = req.file.originalname
+		} else {
+			error_messages.push("Only .png, .jpg and .jpeg are accepted")
+		}
+	} else {
+		// CONDITIONS FOR PICTURE NAME
+		error_messages.push("You need to add an image!")
+	}
 	// CONDITIONS AGAINST HACKERS
 	if(!req.session.isLoggedIn){
 		error_messages.push("You have to login!")
 	}
-	// CONDITIONS FOR PICTURE NAME
-	if(picture_name == undefined) {
-		error_messages.push("Project picture name should not be empty")
-	}
+
 	// CONDITIONS FOR THE PROJECT ID
 	if (projectid == "") {
 		error_messages.push("Project id should not be empty")
@@ -1178,8 +1185,17 @@ app.post("/pictures/edit/:id", upload.single('picture_name'), function(req, res)
 	const id = req.params.id
 	const picture_title = req.body.picture_title
 	const projectid = req.body.projectid
-	const picture_name = req.file.originalname
+	let picture_name
 	const error_messages = []
+	if(req.file) {
+		if(req.file.mimetype == "image/png" || req.file.mimetype == "image/jpg" || req.file.mimetype == "image/jpeg") {
+			picture_name = req.file.originalname
+		} else {
+			error_messages.push("Only .png, .jpg and .jpeg are accepted")
+		}
+	} else {
+		error_messages.push("You need to add an image!")
+	}
 	// CONDITIONS AGAINST HACKERS
 	if(!req.session.isLoggedIn){
 		error_messages.push("You have to login!")
@@ -1201,9 +1217,6 @@ app.post("/pictures/edit/:id", upload.single('picture_name'), function(req, res)
 		error_messages.push("Picture title should be more than " + min_chara_3 + " characters")
 	} else if (numbers_regex.test(picture_title)) {
 		error_messages.push("Picture title should not consist of numbers only")
-	}
-	if(picture_name == undefined) {
-		error_messages.push("Picture name should not be empty")
 	}
 	if (error_messages.length == 0) {
 		db.edit_picture(picture_title, projectid, picture_name, id, function(error){
