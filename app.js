@@ -6,6 +6,7 @@ const like = require("like")
 const multer  = require('multer')
 const bcrypt = require('bcrypt')
 const db = require("./db")
+const fs = require("node:fs")
 
 // APP GLOBAL VARIABLES VALUES
 // text and numbers character limits
@@ -490,6 +491,7 @@ app.get("/admin_pictures", function(req, res){
 app.post("/pictures/add", upload.single('picture_name'), function(req, res){
 	const projectid = req.body.projectid
 	const picture_title = req.body.picture_title
+	const image_path = "./public/images/" + req.file.originalname
 	let picture_name
 	const error_messages = []
 	if(req.file) {
@@ -497,6 +499,11 @@ app.post("/pictures/add", upload.single('picture_name'), function(req, res){
 			picture_name = req.file.originalname
 		} else {
 			error_messages.push("Only .png, .jpg and .jpeg are accepted")
+			fs.unlink(image_path, (error) => {
+				if (error){
+					error_messages.push("Only .png, .jpg and .jpeg are accepted")
+				}
+			})
 		}
 	} else {
 		// CONDITIONS FOR PICTURE NAME
@@ -1185,6 +1192,7 @@ app.post("/pictures/edit/:id", upload.single('picture_name'), function(req, res)
 	const id = req.params.id
 	const picture_title = req.body.picture_title
 	const projectid = req.body.projectid
+	const image_path = "./public/images/" + req.file.originalname
 	let picture_name
 	const error_messages = []
 	if(req.file) {
@@ -1192,6 +1200,11 @@ app.post("/pictures/edit/:id", upload.single('picture_name'), function(req, res)
 			picture_name = req.file.originalname
 		} else {
 			error_messages.push("Only .png, .jpg and .jpeg are accepted")
+			fs.unlink(image_path, (error) => {
+				if (error){
+					error_messages.push("Only .png, .jpg and .jpeg are accepted")
+				}
+			})
 		}
 	} else {
 		error_messages.push("You need to add an image!")
@@ -1275,6 +1288,8 @@ app.get("/picture_remove", function(req, res){
 
 app.post("/pictures/remove/:id", function(req, res){
 	const id = req.params.id
+	const image_path = "./public/images/" + req.file.originalname
+
 	const error_messages = []
 	// CONDITIONS AGAINST HACKERS
 	if(!req.session.isLoggedIn){
