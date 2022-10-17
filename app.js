@@ -1192,10 +1192,10 @@ app.post("/pictures/edit/:id", upload.single('picture_name'), function(req, res)
 	const id = req.params.id
 	const picture_title = req.body.picture_title
 	const projectid = req.body.projectid
-	const image_path = "./public/images/" + req.file.originalname
 	let picture_name
 	const error_messages = []
 	if(req.file) {
+		const image_path = "./public/images/" + req.file.originalname
 		if(req.file.mimetype == "image/png" || req.file.mimetype == "image/jpg" || req.file.mimetype == "image/jpeg") {
 			picture_name = req.file.originalname
 		} else {
@@ -1206,8 +1206,6 @@ app.post("/pictures/edit/:id", upload.single('picture_name'), function(req, res)
 				}
 			})
 		}
-	} else {
-		error_messages.push("You need to add an image!")
 	}
 	// CONDITIONS AGAINST HACKERS
 	if(!req.session.isLoggedIn){
@@ -1232,22 +1230,47 @@ app.post("/pictures/edit/:id", upload.single('picture_name'), function(req, res)
 		error_messages.push("Picture title should not consist of numbers only")
 	}
 	if (error_messages.length == 0) {
-		db.edit_picture(picture_title, projectid, picture_name, id, function(error){
-			if(error) {
-				error_messages.push("Internal server error!")
-				const model = {
-					id,
-					picture_title,
-					projectid,
-					picture_name,
-					error_messages,
-					layout: "admin.hbs"
+		if(!req.file){
+			db.get_picture_name_by_picture_id(id, function(error){
+				if(error) {
+					error_messages.push("Internal server error!")
+				} else {
+					db.edit_picture_without_picture_name(picture_title, projectid, id, function(error){
+						if(error) {
+							error_messages.push("Internal server error!")
+							const model = {
+								id,
+								picture_title,
+								projectid,
+								error_messages,
+								layout: "admin.hbs"
+							}
+							res.render("picture_edit.hbs", model)
+						} else {
+							res.redirect("/picture_edit")
+							console.log("worked!!!")
+						}
+					})
 				}
-				res.render("picture_edit.hbs", model)
-			} else {
-				res.redirect("/picture_edit")
-			}
-		})
+			})
+		} else {
+			db.edit_picture(picture_title, projectid, picture_name, id, function(error){
+				if(error) {
+					error_messages.push("Internal server error!")
+					const model = {
+						id,
+						picture_title,
+						projectid,
+						picture_name,
+						error_messages,
+						layout: "admin.hbs"
+					}
+					res.render("picture_edit.hbs", model)
+				} else {
+					res.redirect("/picture_edit")
+				}
+			})
+		}
 	} else{
 		db.get_all_pictures(function(error, pictures) {
 			// CONDITIONS AGAINST HACKERS

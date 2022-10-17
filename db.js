@@ -124,6 +124,16 @@ exports.get_pictures_by_project_id = function(id, callback){
 	})
 }
 
+exports.get_picture_name_by_picture_id = function(id, callback){
+	// THIS QUERY SELECTS FROM A CERTAIN TABLE WHERE THE ID IS EQUAL TO THE ID REQUESTED
+	const query = `SELECT picture_name FROM pictures WHERE id = ? `
+	// STORE THE VALUE FROM THAT OBJECT TO AN ARRAY
+	const values = [id]
+	db.get(query, values, function(error, pictures) {
+		callback(error, pictures)
+	})
+}
+
 // GETS AND DISPLAYS THE SEARCHED RESULT
 exports.search_projects = function(searched_value, callback){
 	// THIS QUERY INSERTS VALUES FETCHED FROM THE WEB APPLICATION INTO THE SPECIFIED TABLE
@@ -286,6 +296,16 @@ exports.edit_picture = function(picture_title, picture_name, projectid, id, call
 		callback(error)
 	})
 }
+exports.edit_picture_without_picture_name = function(picture_title, projectid, id, callback){
+	const query = `
+		UPDATE pictures SET picture_title = ?, projectid = ? WHERE id = ?
+	`
+	const values = [picture_title, projectid, id]
+	db.run(query, values, function(error){
+		callback(error)
+	})
+}
+
 exports.remove_picture = function(id, callback){
 	const query = `
 		DELETE FROM pictures WHERE id = ?
