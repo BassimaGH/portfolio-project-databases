@@ -1288,8 +1288,6 @@ app.get("/picture_remove", function(req, res){
 
 app.post("/pictures/remove/:id", function(req, res){
 	const id = req.params.id
-	const image_path = "./public/images/" + req.file.originalname
-
 	const error_messages = []
 	// CONDITIONS AGAINST HACKERS
 	if(!req.session.isLoggedIn){
