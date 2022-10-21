@@ -7,6 +7,7 @@ const multer  = require('multer')
 const bcrypt = require('bcrypt')
 const db = require("./db")
 const fs = require("node:fs")
+const SQLiteStore = require("connect-sqlite3")(expressSession)
 
 // APP GLOBAL VARIABLES VALUES
 // text and numbers character limits
@@ -68,9 +69,10 @@ app.use(
 		saveUninitialized: false,
 		resave: false,
 		secret: "hgkhkhgkshgkhkgjhlsj",
+		store: new SQLiteStore(),
 		cookie: {
 			expires: 360000
-		}
+		},
 	})
 )
 
