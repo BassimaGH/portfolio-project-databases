@@ -70,9 +70,6 @@ app.use(
 		resave: false,
 		secret: "hgkhkhgkshgkhkgjhlsj",
 		store: new SQLiteStore(),
-		cookie: {
-			expires: 360000
-		},
 	})
 )
 
