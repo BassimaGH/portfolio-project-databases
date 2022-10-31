@@ -1392,4 +1392,4 @@ app.get("/picture_edit_search", function(req, res){
 })
 
 // LISTENS TO THE CHOSEN PORT NUMBER
-app.listen(8080)
+app.listen(process.env.PORT || 8080)
