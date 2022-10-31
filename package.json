@@ -4,8 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "build-css": "tailwindcss -i ./input.css -o public/style.css",
-    "start": "node app.js"
+    "start": "nodemon app.js",
+    "build-css": "tailwindcss -i ./input.css -o public/style.css"
   },
   "repository": {
     "type": "git",
@@ -31,5 +31,8 @@
     "postcss": "^8.4.16",
     "sqlite3": "^5.1.1",
     "tailwindcss": "^3.1.8"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
   }
 }
