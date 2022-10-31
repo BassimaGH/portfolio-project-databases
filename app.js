@@ -4,7 +4,7 @@ const expressHandlebars = require("express-handlebars")
 const expressSession = require("express-session")
 const like = require("like")
 const multer  = require('multer')
-const bcrypt = require('bcrypt')
+const bcryptjs = require('bcryptjs')
 const db = require("./db")
 const fs = require("node:fs")
 const SQLiteStore = require("connect-sqlite3")(expressSession)
@@ -218,7 +218,7 @@ app.post("/login", function (req, res){
 	// STORES THE KEY-VALUE PAIRS OF DATA (USERNAME, PASSWORD) SUBMITTED IN THE REQUEST BODY IN A VARIABLE
 	const username = req.body.username
 	const password = req.body.password
-	const correct_password = bcrypt.compareSync(password, admin_password_hash)
+	const correct_password = bcryptjs.compareSync(password, admin_password_hash)
 	// CHECKS IF THE USER INPUTES THE CORRECT USERNAME AND PASSWORD
 	if (username == admin_username && correct_password == true){
 		// SETS THE LOGIN SESSION TO TRUE
