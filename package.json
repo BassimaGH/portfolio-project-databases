@@ -4,7 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "build-css": "tailwindcss -i ./input.css -o public/style.css"
+    "build-css": "tailwindcss -i ./input.css -o public/style.css",
+    "start": "node app.js"
   },
   "repository": {
     "type": "git",
