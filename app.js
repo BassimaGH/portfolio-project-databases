@@ -6,7 +6,7 @@ const like = require("like")
 const multer  = require('multer')
 const bcryptjs = require('bcryptjs')
 const db = require("./db")
-const fs = require("node:fs")
+const fs = require("fs")
 const SQLiteStore = require("connect-sqlite3")(expressSession)
 
 // APP GLOBAL VARIABLES VALUES
