@@ -22,19 +22,19 @@
 	</div>
 	{{/if}}
 
-	<form action="/pictures/add" method="post" enctype="multipart/form-data" class="mt-[35px] mb-[35px] bg-gray-100 p-4 space-y-4 shadow-xl">
+	<form action="/pictures/add" method="post" enctype="multipart/form-data" class="mt-[35px] mb-[35px] bg-form_color p-4 space-y-4 shadow-xl">
 		<div class="flex flex-col md:flex-row gap-4 whitespace-nowrap">
-			<label for="projectid">Project id: </label>
+			<label for="projectid" class="text-light_nav_body_text_color">Project id: </label>
 			<input name="projectid" type="number" id="projectid" value="{{projectid}}" class="pl-1.5 border border-solid border-gray-300 rounded transition ease-in-out focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none">
 		</div>
 
 		<div class="flex flex-col md:flex-row gap-4 whitespace-nowrap">
-			<label for="picture_title">Picture title: </label>
+			<label for="picture_title" class="text-light_nav_body_text_color">Picture title: </label>
 			<input type="text" name="picture_title" id="picture_title" value="{{picture_title}}" class="pl-1.5 border border-solid border-gray-300 rounded transition ease-in-out focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none">
 		</div>
 
 		<div class="flex flex-col md:flex-row gap-4 whitespace-nowrap">
-			<label for="picture_name">Picture name</label>
+			<label for="picture_name" class="text-light_nav_body_text_color">Picture name</label>
 			<input type="file" name="picture_name" value="{{picture_name}}" id="picture_name">
 		</div>
 

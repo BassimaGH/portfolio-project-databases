@@ -63,8 +63,8 @@
 
 
 	<div class="overflow-x-auto mb-[4vw]">
-		<table class="table-fixed mt-[15px]">
-		<thead class="bg-gray-50 p-4">
+		<table class="table-fixed mt-[15px] text-light_nav_body_text_color">
+		<thead class="bg-form_color p-4">
 			<tr>
 				<th scope="col" class="py-3 pl-[2vw] text-start border-4 border-x-gray-300">Title</th>
 				<th scope="col" class="py-3 pl-[2vw] text-start border-4 border-r-gray-300">Text</th>
@@ -73,15 +73,15 @@
 				<th scope="col" class="py-3 pl-[2vw] text-start border-4 border-r-gray-300">Action</th>
 			</tr>
 		</thead>
-		<tbody class="bg-gray-100 space-y-4 p-4">
+		<tbody class="bg-form_color space-y-4 p-4">
 			{{#if blogs.length}}
 				{{#each blogs}}
 					<tr>
 						<form action="/blogs/edit/{{id}}" method="post">
-							<td class="hover:text-primary_color py-3 pr-[2vw] pl-[1vw] border-4 border-x-gray-300"><input type="text" name="post_title" value="{{post_title}}" class="bg-gray-100 py-2 px-4"></td>
-							<td class="hover:text-primary_color py-3 pr-[2vw] pl-[1vw] border-4 border-r-gray-300"><input type="text" name="post_text" value="{{post_text}}" class="bg-gray-100 py-2 px-4"></td>
-							<td class="hover:text-primary_color py-3 pr-[2vw] pl-[1vw] border-4 border-r-gray-300"><input type="date" name="post_date" value="{{post_date}}" class="bg-gray-100 py-2 px-4"></td>
-							<td class="hover:text-primary_color py-3 pr-[2vw] pl-[1vw] border-4 border-r-gray-300"><input type="number" name="projectid" value="{{projectid}}" class="bg-gray-100 py-2 px-4"></td>
+							<td class="hover:text-primary_color py-3 pr-[2vw] pl-[1vw] border-4 border-x-gray-300"><input type="text" name="post_title" value="{{post_title}}" class="bg-form_color py-2 px-4"></td>
+							<td class="hover:text-primary_color py-3 pr-[2vw] pl-[1vw] border-4 border-r-gray-300"><input type="text" name="post_text" value="{{post_text}}" class="bg-form_color py-2 px-4"></td>
+							<td class="hover:text-primary_color py-3 pr-[2vw] pl-[1vw] border-4 border-r-gray-300"><input type="date" name="post_date" value="{{post_date}}" class="bg-form_color py-2 px-4"></td>
+							<td class="hover:text-primary_color py-3 pr-[2vw] pl-[1vw] border-4 border-r-gray-300"><input type="number" name="projectid" value="{{projectid}}" class="bg-form_color py-2 px-4"></td>
 							<td class="pr-[2vw] pl-[1vw] border-4 border-r-gray-300"><input type="submit" value="Confirm edit" class="mt-[35px] mb-[35px] bg-primary_color text-white font-light py-2 px-4 rounded mt-[35px] hover:bg-hover_color hover:shadow-xl transition ease-in-out" name="edit_blog_posts" id="edit_blog_posts"></td>
 						</form>
 					</tr>

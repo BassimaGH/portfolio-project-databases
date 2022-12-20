@@ -15,7 +15,9 @@ module.exports = {
 				primary_color: "#86112E",
 				secondary_color: "#15252f",
 				darker_secondary_color: "#152a37",
-				hover_color: "#800000"
+				hover_color: "#800000",
+				form_color: "#000000",
+				admin_nav_color: "#1c1c1c"
 			},
 			fontSize: {
 				"nav_text": "2.5em"
